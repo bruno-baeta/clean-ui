@@ -123,7 +123,18 @@ Cada caso abaixo aconteceu de verdade e foi reclamado. Use como referência quan
 | Dashboard "80% bem legal" mas com título em negrito e ícone em quadradinho, chip em pílula redonda, medidor gigante (Leitura na Wikipédia) | Copiar as fotos de perto: título cinza médio, ícone em círculo no canto, chip de 6 px verde/vermelho com seta, medidor até 224 px (anatomia-dashboard.md) |
 | Gráfico principal com celular x computador e um cartão "Pelo celular" com a mesma divisão (Leitura na Wikipédia) | Cada informação uma vez: gráfico compara período atual x anterior; a divisão fica só no cartão dela |
 | Cartão do medidor do tamanho de meia tela, com o desenho pequeno no meio (Leitura na Wikipédia) | Cartão estreito (3/12) e arranjo pela largura do cartão (`@container`) |
-| Linhas da tabela quebrando o nome em 2 ou 3 linhas (coluna de "situação" sobrando) (Leitura na Wikipédia) | 3 colunas: posição, nome, valor com seta; "Novo" em chip no lugar da seta; duas metades pela largura da tabela |
+| Linhas da tabela quebrando o nome em 2 ou 3 linhas (coluna de "situação" sobrando) (Leitura na Wikipédia) | 3 colunas: posição, nome, valor com seta; "Novo" em chip no lugar da seta |
+| Lista de mais de 20 itens num cartão largo no fim da tela, partida em 2 ou 3 blocos de linhas lado a lado: "os itens parecem se juntar horizontalmente, fica meio bagunçado" (Painel industrial) | Cartão vertical próprio ao lado dos gráficos, uma coluna de linhas, páginas pela altura; ou 3 cartões separados |
+| Dois pares de cartões vizinhos com as mesmas barras deitadas: "duas listas idênticas, vai contra a skill" (Painel industrial) | Um desenho por bloco: barras deitadas num, partes de um todo no outro; colunas dos erros num, alvo em anéis no outro |
+| "Por tipo de item": 3 blocos de número e linhas lado a lado num cartão muito alto (Painel industrial) | Colunas agrupadas comparando as mesmas 3 medidas nos 3 tipos, ocupando a altura do cartão |
+| "Da meta ao realizado" em barras com segmentos soltos, depois em cascata; "Para onde vai o total" em barra 100% de 5 cores, depois em funil: "ainda são gráficos complexos de entender" (Painel industrial) | Barras que saem do meio (tirou à esquerda, somou à direita) com o resultado em número; quadro de 100 quadradinhos "De cada 100 horas" |
+| Dashboard com cartões de 800 px de altura no widescreen, ou passando da borda de baixo (Painel industrial) | A partir de 1920 x 800 tudo cabe na janela: indicadores + duas faixas iguais, lista paginada ao lado |
+| Quadro e alvo pequenos no meio de um cartão largo: "muito espaço vago no card" (Painel industrial) | O desenho toma a forma do cartão (20 x 5 de ponta a ponta; alvo com a altura do cartão) ou o cartão encolhe e entra outro |
+| Legenda na ordem do cadastro: 40%, 8%, 25%, 15%, 12% (Painel industrial) | Da maior para a menor: 40%, 25%, 15%, 12%, 8% |
+| Treemap com texto cortado e quadradinhos sem % (Painel industrial) | 5 blocos + "Outros", todos com nome e % |
+| 8 barras de motivos com poucos % cada: "gráfico bem normal e ruim" (Painel industrial) | Motivos agrupados em 7 temas de uma palavra, em colunas com a % em cima |
+| Chip "Abr ×" à direita do seletor, empurrando o seletor (Painel industrial) | Chip à esquerda dos controles; seletor de largura fixa |
+| Menu lateral fixo, com nomes compridos ("Vendas e metas", "Estoque e perdas") e ícones de estilos diferentes (Painel industrial) | Uma palavra por área, ícones da mesma família, botão de recolher para só ícones |
 | Gráfico sumindo no celular (`flex-1` com altura fixa) (Leitura na Wikipédia) | `lg:flex-1`; o check acusa "gráfico sem altura" |
 | Cartão "Pelo celular" com medidor de uma parte só (Leitura na Wikipédia) | "Como leem": barra empilhada + porcentagem de cada plataforma |
 | Chip de variação grudado depois do número na tabela (Leitura na Wikipédia) | Coluna própria de chips "Vs véspera", alinhada; número na coluna de números |

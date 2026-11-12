@@ -93,7 +93,7 @@ R$ 11.596     R$ 5,40       7.574.183     60.784
 - Linhas: 48 a 56 px, separadas por **linha tracejada**, primeira coluna escura em peso médio, números à direita.
 - Status em `StatusChip`; variação com `TrendDot` ao lado do número.
 - Abas com contagem em cima à direita (`Tabs`): "Todos 100 | Subindo 39 | Novos 19".
-- Largura da linha até ~900 px. Mais largo: divida em duas tabelas lado a lado ou dê mais colunas de dado.
+- Largura da linha até ~900 px. Lista longa (mais de ~8 linhas): cartão vertical próprio de 3 ou 4 colunas da grade, ao lado dos gráficos, com uma coluna de linhas e páginas pela altura. Nunca blocos de linhas lado a lado dentro do mesmo cartão; se precisar dividir, são cartões separados, cada um com título.
 
 ## Celular (Spectra mobile)
 

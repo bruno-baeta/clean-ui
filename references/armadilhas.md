@@ -14,6 +14,17 @@
 - **Projeto com `next-themes`:** não use o `ThemeToggle` do kit com `localStorage('tema')`; os dois brigam pela classe do `<html>`. Reescreva o botão com `useTheme()` (`setTheme('system' | 'light' | 'dark')`) e confira se o `ThemeProvider` tem `enableSystem` e `defaultTheme="system"`. Com `enableSystem={false}` a tela nunca muda com o sistema e o `check-ui` acusa "a página não muda entre tema claro e escuro".
 - **Redesign ao lado do app antigo:** escopo os tokens novos numa classe (`.novo { --card: ... }` e `.dark .novo { ... }`) e ponha a classe na raiz da moldura nova. O `@theme inline` já aponta para `var(--card)`, então os utilitários usam o valor do escopo. O app antigo não muda.
 
+## Recharts
+
+- **Campo chamado `ref` nos dados derruba a tela**: o Recharts repassa cada item como props para a barra, e `ref: 7.8` vira "Expected ref to be a function". O mesmo vale para `key`. Use outro nome (`refe`, `refeitos`).
+- **Uma barra enorme ao lado de várias pequenas** (80% num item contra 1% a 10% nos outros) esmaga as pequenas em bolinhas. Tire a grande do gráfico (ela vira o número no canto do cartão) e mostre só as outras.
+
+## Lista alta ao lado (row-span)
+
+- O cartão da lista ocupa duas faixas da grade (`lg:row-span-2`); o conteúdo fica em `absolute inset-0` para **não** empurrar a altura das faixas, e as linhas por página saem da altura medida (`ListaAlta`). O `check-ui` acusa "cartões lado a lado com alturas diferentes (380 vs 780)": nesse arranjo é esperado; confira no print que a lista termina junto com a última faixa.
+- **`row-span` com `!` apaga o `row-start`**: `fit:row-span-2!` vira `grid-row: span 2 / span 2 !important` e a lista perde a linha de início (os gráficos descem uma faixa e as faixas `1fr` somem). Escreva as duas coisas juntas: `lg:row-[2/span_3] fit:row-[2/span_2]!`.
+- No ultrawide com tudo numa faixa só, sem altura fixa, os gráficos somem (140 px). Dê à lista uma altura mínima em linhas (`minRows`) para ela dar a altura da faixa, ou mantenha duas faixas com altura fixa.
+
 ## React 19 e eslint
 
 - **Contagem regressiva sem `setState` em efeito:** `useEffect(() => { setNow(Date.now()) ...})` é erro no eslint novo (renderização em cascata). Use `useNow()` do kit (`useSyncExternalStore`: `null` no servidor e na hidratação, o minuto atual no navegador).
@@ -57,7 +68,7 @@ Caso real (Comparar métodos do MegaLab, ultrawide, 2026-11-12): "tem espaço em
 - **Duas colunas comparáveis (A x B, antes x agora) têm a mesma regra**: as duas centralizadas, com a mesma altura de linha, para as linhas ficarem na mesma altura dos dois lados. Linha com barra e linha sem barra precisam da mesma altura mínima.
 - **Gráfico com teto de altura (`useFitHeight` com `max` baixo) ao lado de um cartão que estica** deixa vão embaixo do gráfico. Na mesma faixa, todos acompanham a mesma altura. Em telas altas (1100 a 1300 px) suba o `max` (~900) para o gráfico chegar até a borda.
 - **Bloco de texto curto ao lado de gráficos altos na mesma faixa (ultrawide)**: o cartão de texto fica com metade vazia, por mais que se centralize. Mude a composição: o bloco de texto inteiro em cima e os gráficos embaixo, crescendo até a borda.
-- **Linhas de comparação com mais de ~768 px** ficam com o valor longe do rótulo: limite o bloco (`mx-auto w-full max-w-3xl`) dentro da coluna.
+- **Linhas de comparação com mais de ~768 px** ficam com o valor longe do rótulo: limite o bloco (`w-full max-w-3xl`) dentro da coluna, **sem** `mx-auto`: centralizado, o texto ganha um recuo à esquerda em relação ao título do cartão (reprovado num painel industrial).
 - O `check-ui` agora acusa "cartão com vão vazio por dentro", "cartão com conteúdo espalhado" e compara a altura dos cartões mesmo dentro de um invólucro sem fundo (o `div` com `ref` de medir). Antes ele não via nenhum dos três.
 - **Linha que abre detalhe dentro da lista** (acordeão) faz o cartão da lista crescer, a linha da grade cresce junto e o vizinho esticado (`flex-1`, `[&>*]:h-full`) cresce também: no MegaLab, tocar numa estratégia da classificação fazia o pódio ao lado descer e mudar de tamanho. O vizinho fica com `min-height` da primeira tela e `lg:self-start` (não estica com a lista). Teste: meça o vizinho antes e depois de abrir uma linha, em todas as larguras.
 - **Seletor nativo com a seta em `absolute`:** o `label` em volta não pode esticar (pai `flex-col` sem `items-start`), senão a seta vai para a borda da coluna, longe da pílula.

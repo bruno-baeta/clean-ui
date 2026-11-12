@@ -6,8 +6,8 @@
  * número grande em peso médio; chip de variação de canto pequeno (6 px), verde ou vermelho suave e sempre com seta;
  * linhas tracejadas como separador; ícone em círculo tingido no canto direito; nada de cartão colorido de destaque.
  */
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
+import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight, Minus } from 'lucide-react';
 import { InfoTip, cn } from './ui';
 
 // ---------------------------------------------------------------------------
@@ -417,4 +417,138 @@ function subscribeReduced(cb: () => void) {
   const m = window.matchMedia(REDUCED);
   m.addEventListener('change', cb);
   return () => m.removeEventListener('change', cb);
+}
+
+// ---------------------------------------------------------------------------
+// Lista longa num cartão vertical próprio (painel industrial, pedido do usuário)
+// ---------------------------------------------------------------------------
+
+/**
+ * A única lista da tela, numa coluna da grade (3 ou 4 de 12), ao lado dos gráficos, de cima a baixo:
+ *   <DashCard title="Máquinas" className="order-last lg:order-none lg:col-span-4 lg:row-span-2">
+ *     <ListaAlta rows={rows} chave={(r) => r.id} head={<div className="grid grid-cols-[...] ...">...</div>} row={(r) => <div className="grid h-full grid-cols-[...] ...">...</div>} />
+ * Uma coluna de linhas só: nunca blocos de linhas lado a lado no mesmo cartão (parecem se juntar na horizontal).
+ * O conteúdo fica absoluto para não empurrar a altura das faixas; mostra as linhas que cabem e pagina o resto.
+ * No celular: 10 por página. Colunas de dado pela largura do cartão (@md:, @2xl: nas classes da grade da linha).
+ * minRows: altura mínima em linhas, para quando a faixa não tem altura fixa e é a lista que dá a altura aos vizinhos.
+ */
+export function ListaAlta<T>({ rows, head, row, chave, rowH = 48, minRows = 0 }: {
+  rows: T[]; head: ReactNode; row: (r: T) => ReactNode; chave: (r: T) => string; rowH?: number; minRows?: number;
+}) {
+  const [ref, cabem] = useFitRows(rowH, 10);
+  const [pag, setPag] = useState(0);
+  const pags = Math.max(1, Math.ceil(rows.length / cabem));
+  const p = Math.min(pag, pags - 1);
+  const vis = rows.slice(p * cabem, (p + 1) * cabem);
+  const BTN = 'grid size-9 place-items-center rounded-full bg-muted text-foreground hover:bg-accent disabled:opacity-40 [&>svg]:size-4';
+  return (
+    <div className="@container relative lg:h-full lg:min-h-(--lista-min)" style={{ '--lista-min': `${minRows * rowH + 84}px` } as CSSProperties}>
+      <div className="flex flex-col lg:absolute lg:inset-0">
+        {head}
+        <div ref={ref} className="min-h-0 lg:flex-1 lg:overflow-hidden">
+          {vis.map((r) => <div key={chave(r)} style={{ height: rowH }}>{row(r)}</div>)}
+        </div>
+        {pags > 1 && (
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-dashed border-border pt-3 text-[13px] text-muted-foreground">
+            <span>{p * cabem + 1} a {Math.min(rows.length, (p + 1) * cabem)} de {rows.length}</span>
+            <button type="button" aria-label="Página anterior" disabled={p === 0} onClick={() => setPag(p - 1)} className={BTN}><ChevronLeft /></button>
+            <button type="button" aria-label="Próxima página" disabled={p >= pags - 1} onClick={() => setPag(p + 1)} className={BTN}><ChevronRight /></button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Cascata e funil (colunas feitas à mão que ocupam a altura do cartão)
+// ---------------------------------------------------------------------------
+
+/**
+ * Cada coluna vai de `de` a `ate` (0 a 1 da altura; deixe ~15% livres em cima para o rótulo), com o valor em cima e o nome embaixo.
+ * Cascata ("da meta ao realizado"): totais com de = 0 em cinza; passos flutuantes entre o acumulado anterior e o novo,
+ *   uma cor para "somou" e outra para "tirou" (legenda no cabeçalho), texto com sinal ("+79 mil", "−145 mil").
+ * Funil ("para onde vai o total"): colunas que encolhem; `fantasma` = altura da etapa anterior (o trecho perdido fica apagado);
+ *   só a última na cor de destaque; o nome das perdas vai em KeyValue embaixo do gráfico.
+ */
+export function Colunas({ items }: { items: { nome: string; de: number; ate: number; cor: string; texto: string; fantasma?: number }[] }) {
+  return (
+    <div className="grid h-52 gap-2 lg:h-full lg:min-h-0" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
+      {items.map((it) => (
+        <div key={it.nome} className="flex min-h-0 min-w-0 flex-col items-center">
+          <div className="relative w-full min-h-0 flex-1">
+            {it.fantasma !== undefined && it.fantasma > it.ate && (
+              <div className="absolute left-1/2 w-full max-w-12 -translate-x-1/2 rounded-lg bg-muted" style={{ bottom: `${it.ate * 100}%`, height: `${(it.fantasma - it.ate) * 100}%` }} />
+            )}
+            <div className="grow-y absolute left-1/2 min-h-1.5 w-full max-w-12 -translate-x-1/2 rounded-lg" style={{ bottom: `${it.de * 100}%`, height: `${Math.max(0, it.ate - it.de) * 100}%`, background: it.cor }} />
+            <div className="absolute inset-x-0 pb-1.5 text-center text-[11px] font-medium whitespace-nowrap tabular" style={{ bottom: `${Math.max(it.ate, it.fantasma ?? 0) * 100}%` }}>{it.texto}</div>
+          </div>
+          <div className="mt-2 text-center text-xs leading-tight text-muted-foreground">{it.nome}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Gráficos de bater o olho (painel industrial): o que somou e o que tirou; de cada 100
+// ---------------------------------------------------------------------------
+
+/**
+ * Barras que saem do meio: para a direita o que somou, para a esquerda o que tirou. Uma linha por fator, valor com sinal ao lado.
+ * De bater o olho: a barra mais comprida é o que mais pesou, e o lado diz se ajudou ou atrapalhou.
+ */
+export function Divergentes({ items, fmt }: { items: { nome: string; v: number; /** Feito contra planejado, embaixo do nome. */ apoio?: string }[]; fmt: (v: number) => string }) {
+  const max = Math.max(1, ...items.map((i) => Math.abs(i.v)));
+  return (
+    <div className="flex h-full w-full max-w-4xl flex-col justify-center">
+      {items.map((it) => {
+        const w = (Math.abs(it.v) / max) * 50;
+        return (
+          <div key={it.nome} className="grid h-12 shrink-0 grid-cols-[7.25rem_minmax(0,1fr)_4.75rem] items-center gap-3 text-sm lg:h-auto lg:max-h-24 lg:min-h-11 lg:flex-1">
+            <span className="min-w-0 leading-tight"><span className="block">{it.nome}</span>{it.apoio && <span className="block text-xs text-muted-foreground">{it.apoio}</span>}</span>
+            <span className="relative h-3 fit:h-1/2">
+              <span className="absolute inset-y-[-6px] left-1/2 w-px bg-border" />
+              <span className="grow-x absolute inset-y-0 min-w-1 rounded-full fit:rounded-lg" style={{ left: it.v >= 0 ? '50%' : `${50 - w}%`, width: `${w}%`, background: it.v >= 0 ? 'var(--primary)' : 'var(--cat-2)', transformOrigin: it.v >= 0 ? 'left center' : 'right center' }} />
+            </span>
+            <span className="text-right font-medium tabular">{fmt(it.v)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Quadro de 100 quadradinhos: cada um vale 1% do total. "De cada 100 horas, 40 produzindo."
+ * As partes vêm ordenadas da maior para a menor (no quadro e na legenda) e são arredondadas para somar 100.
+ * O formato segue o cartão: estreito = 10 x 10 com a legenda ao lado; largo = 20 x 5 de ponta a ponta com a legenda embaixo.
+ */
+export function Quadro100({ parts }: { parts: { label: string; value: number; color: string }[] }) {
+  const ord = [...parts].sort((a, b) => b.value - a.value);
+  const tot = ord.reduce((a, b) => a + b.value, 0) || 1;
+  const exato = ord.map((p) => (p.value / tot) * 100);
+  const n = exato.map(Math.floor);
+  const falta = 100 - n.reduce((a, b) => a + b, 0);
+  exato.map((e, k) => [e - Math.floor(e), k] as const).sort((a, b) => b[0] - a[0]).slice(0, falta).forEach(([, k]) => { n[k] += 1; });
+  const cells = ord.flatMap((p, k) => Array.from({ length: n[k] }, () => p.color));
+  return (
+    <div className="@container h-full min-h-0">
+      <div className="flex h-full min-h-0 items-center justify-center gap-5 @2xl:flex-col @2xl:items-stretch @2xl:gap-4">
+        {/* grid-flow-col: os quadradinhos enchem coluna por coluna, e cada atividade vira uma faixa da esquerda para a direita. */}
+        <div className="animate-in grid aspect-square h-36 shrink-0 auto-cols-fr grid-flow-col grid-rows-10 gap-[3px] fit:h-full fit:max-h-72 @2xl:aspect-[4/1] @2xl:h-auto! @2xl:max-h-none! @2xl:w-full @2xl:grid-rows-5 @2xl:gap-1" role="img" aria-label="Quadro de 100 quadradinhos com a parte de cada atividade">
+          {cells.map((cor, k) => <span key={k} className="rounded-[3px] @2xl:rounded-md" style={{ background: cor }} />)}
+        </div>
+        <div className="min-w-0 flex-1 @2xl:flex @2xl:flex-none @2xl:flex-wrap @2xl:justify-between @2xl:gap-x-6">
+          {ord.map((p, k) => (
+            <div key={p.label} className="flex min-h-8 items-center gap-2 text-sm">
+              <span className="size-2 shrink-0 rounded-full" style={{ background: p.color }} />
+              <span className="min-w-0 flex-1 text-muted-foreground @2xl:flex-none">{p.label}</span>
+              <span className="font-medium tabular">{n[k]}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -104,7 +104,7 @@ Tamanhos úteis para testar (já descontadas as barras do navegador): 1920×950,
 
 - **Ganhe colunas, não esticar.** Defina o grid por largura: 1 coluna no celular, 2 a 3 no notebook, 4 no full HD e 5 a 6 a partir de 2560 px (`3xl:grid-cols-4 4xl:grid-cols-6`; os breakpoints `3xl` = 1920 px e `4xl` = 2560 px vêm no `tokens.css`. Não use `min-[1920px]:`: no Tailwind v4 variantes em px saem antes de `lg:` no CSS e perdem). Prefira `grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr))` para blocos de apoio.
 - **Proporção máxima dos gráficos.** Gráfico de tempo até ~4:1 (largura:altura); barras e mapas até ~2,5:1. Se o espaço for mais largo que isso, ponha outro bloco ao lado.
-- **Linhas de lista com até ~720 px.** Mais que isso, a lista vira 2 ou 3 colunas, ou passa a ser o mestre de um mestre e detalhe.
+- **Linhas de lista com até ~720 px.** A lista longa fica num cartão vertical estreito ao lado dos gráficos (uma coluna de linhas), vira cartões separados por grupo, ou passa a ser o mestre de um mestre e detalhe. Não parta as linhas em 2 ou 3 blocos dentro do mesmo cartão.
 - **Use a largura extra para o que antes era escondido:** o painel de detalhe fica aberto ao lado, a tabela aparece ao lado do gráfico, o filtro vira barra lateral fixa.
 - **Mantenha largura total** (regra da skill): nada de coluna estreita centralizada; o que muda é o número de colunas.
 - **Altura:** ultrawide costuma ser baixo em relação à largura; a primeira tela (cabeçalho + destaque + visual principal) precisa caber em 960 px de altura útil.

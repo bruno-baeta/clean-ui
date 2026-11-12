@@ -25,6 +25,9 @@
 @custom-variant light (&:where(.light, .light *));
 /* Tela alta (>= 800 px): use lg:tall: para travar o dashboard na altura da janela só quando cabe. */
 @custom-variant tall (@media (min-height: 50rem));
+/* Tela larga e alta (1920 x 800 ou mais): use fit: para o dashboard caber inteiro na janela, sem rolagem
+   (moldura fit:h-dvh, grade fit:grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)], cartões fit:h-auto!). */
+@custom-variant fit (@media (min-width: 120rem) and (min-height: 50rem));
 
 /* Claro (paleta Cobalto, ponto de partida; troque pela escolhida em references/paletas.md) */
 :root {

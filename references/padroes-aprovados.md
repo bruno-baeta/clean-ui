@@ -51,7 +51,7 @@ Responde: "Estou ganhando ou perdendo?" Fica ao lado do herói (4 de 12).
 - A única lista da tela junta o dado geral com o do usuário: sorteios + colunas "Minha aposta" (chip) e "Saldo".
 - **Colunas do usuário somem quando ele não tem dados** (sem apostas: sem a coluna e sem a aba "Apostei"). A coluna toda com "Sem aposta" é ruído.
 - Colunas definidas pela largura **de cada coluna de linhas**, medida em JS (`ResizeObserver`) e aplicada com `gridTemplateColumns` inline, na ordem de prioridade: no estreito sai primeiro o saldo, depois o que é menos importante. Abaixo de ~400 px, a linha empilha (número e chip em cima, dezenas embaixo).
-- Tela larga: 2 ou 3 colunas de linhas (`grid-flow-col` + `gridTemplateRows: repeat(n, auto)`), cabeçalho repetido por coluna, páginas com "1 a 10 de 60".
+- Tela larga: a lista continua com uma coluna de linhas, num cartão vertical ao lado dos gráficos (`ListaAlta`), com páginas "1 a 10 de 60". Blocos de linhas lado a lado no mesmo cartão foram reprovados num painel industrial (2026-11-12): "os itens parecem se juntar horizontalmente, fica meio bagunçado".
 
 ## 5. Apoio sazonal e secundário
 
