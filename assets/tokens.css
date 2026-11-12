@@ -1,0 +1,239 @@
+/*
+ * Tokens base (Tailwind v4). Copie para o globals.css do projeto.
+ *
+ * DOIS TEMAS, SEMPRE. O tema segue o sistema e pode ser trocado pelo ThemeToggle (assets/ui.tsx),
+ * que grava a escolha e põe a classe .dark ou .light no <html>.
+ * Sem JS, o @media abaixo já aplica o escuro para quem usa o sistema escuro.
+ * Para não piscar o tema errado, coloque no <head>, antes do CSS:
+ *   <script>try{var t=localStorage.getItem('tema'),d=t?t==='escuro':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.add(d?'dark':'light')}catch(e){}</script>
+ *
+ * PALETA: não existe paleta padrão. As cores abaixo são a paleta Cobalto só como ponto de partida.
+ * Escolha uma paleta validada em references/paletas.md (Cobalto, Índigo, Ciano, Coral) pela marca ou pelo assunto
+ * (uma só, sem montar versões para escolher) e troque o bloco de cores dos dois temas. Regras: base neutra, um destaque,
+ * --seq-* para dado ordenado (uma cor), --cat-* para séries sem ordem, --critical só para status.
+ *
+ * Fonte: carregue Plus Jakarta Sans (next/font/google ou Google Fonts) e aponte --font-brand para ela.
+ *   Next:   const font = Plus_Jakarta_Sans({ variable: '--font-brand', subsets: ['latin'] });
+ *   HTML:   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+ *
+ * Em componentes, gráficos e SVG use sempre os tokens (bg-card, var(--chart-axis)...),
+ * nunca #000, #fff, bg-black, text-white ou hex solto: isso quebra um dos temas.
+ */
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+/* Tela alta (>= 800 px): use lg:tall: para travar o dashboard na altura da janela só quando cabe. */
+@custom-variant tall (@media (min-height: 50rem));
+
+/* Claro (paleta Cobalto, ponto de partida; troque pela escolhida em references/paletas.md) */
+:root {
+  color-scheme: light;
+  --font-brand: "Plus Jakarta Sans";
+  --background: #f5f6f8;
+  --foreground: #0d1117;
+  --card: #ffffff;
+  --card-2: #f0f2f5;
+  --muted: #eceff3;
+  --muted-foreground: #57606a;
+  --border: #e2e5ea;
+  --accent: #e9ecf0;
+  --primary: #256abf;            /* destaque: troque pela paleta escolhida (references/paletas.md) */
+  --primary-foreground: #ffffff;
+  --critical: #c53030;           /* só estado ruim, com ícone e rótulo */
+  --critical-foreground: #ffffff;
+  --negative: var(--critical);    /* variação para pior: chip vermelho suave com seta */
+  --positive: #15803d;            /* variação para melhor: chip verde suave com seta (como nas referências) */
+  --warning: #b45309;
+  --info: #256abf;
+  --focus: #57606a;
+  /* Escala ordenada (uma cor, fraco -> forte): magnitude, níveis, faixas */
+  --seq-1: #86b6ef;
+  --seq-2: #5598e7;
+  --seq-3: #256abf;
+  --seq-4: #104281;
+  /* Categóricas em ordem fixa (séries sem ordem); no máximo 3 juntas */
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  /* Gráficos e mapas */
+  --chart-1: var(--cat-1);
+  --chart-muted: #b4bcc6;
+  --chart-grid: #eceff3;
+  --chart-axis: #6b7480;
+  --map-sea: #eef2f6;
+  --map-land: #dde2e8;
+  --map-line: #c9d0d8;
+  --scrim: rgb(0 0 0 / 0.35);     /* fundo atrás de painel/modal */
+}
+
+/* Escuro: pelo sistema (sem escolha salva) ou forçado pela classe .dark */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+    --background: #07080a;
+    --foreground: #eef1f5;
+    --card: #111317;
+    --card-2: #16191e;
+    --muted: #1b1e24;
+    --muted-foreground: #9aa3ad;
+    --border: #23262d;
+    --accent: #1f232a;
+    --primary: #5598e7;
+    --primary-foreground: #06121f;
+    --critical: #f87171;
+    --critical-foreground: #1a0606;
+    --negative: var(--critical);
+    --positive: #4ade80;
+    --warning: #fbbf24;
+    --info: #5598e7;
+    --focus: #9aa3ad;
+    --seq-1: #184f95;
+    --seq-2: #2a78d6;
+    --seq-3: #5598e7;
+    --seq-4: #9ec5f4;
+    --cat-1: #3987e5;
+    --cat-2: #d95926;
+    --cat-3: #199e70;
+    --chart-1: var(--cat-1);
+    --chart-muted: #4b525c;
+    --chart-grid: #1b1e24;
+    --chart-axis: #8b949e;
+    --map-sea: #090b0e;
+    --map-land: #1c2027;
+    --map-line: #2a2f37;
+    --scrim: rgb(0 0 0 / 0.7);
+  }
+}
+:root.dark {
+  color-scheme: dark;
+  --background: #07080a;
+  --foreground: #eef1f5;
+  --card: #111317;
+  --card-2: #16191e;
+  --muted: #1b1e24;
+  --muted-foreground: #9aa3ad;
+  --border: #23262d;
+  --accent: #1f232a;
+  --primary: #5598e7;
+  --primary-foreground: #06121f;
+  --critical: #f87171;
+  --critical-foreground: #1a0606;
+  --negative: var(--critical);
+  --positive: #4ade80;
+  --warning: #fbbf24;
+  --info: #5598e7;
+  --focus: #9aa3ad;
+  --seq-1: #184f95;
+  --seq-2: #2a78d6;
+  --seq-3: #5598e7;
+  --seq-4: #9ec5f4;
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --chart-1: var(--cat-1);
+  --chart-muted: #4b525c;
+  --chart-grid: #1b1e24;
+  --chart-axis: #8b949e;
+  --map-sea: #090b0e;
+  --map-land: #1c2027;
+  --map-line: #2a2f37;
+  --scrim: rgb(0 0 0 / 0.7);
+}
+
+/* Telas largas: use 3xl: (1920 px) e 4xl: (2560 px, ultrawide 21:9). Nunca min-[1920px]: no Tailwind v4
+   variantes em px saem ANTES de lg: (rem) no CSS e perdem a disputa. */
+@theme {
+  --breakpoint-3xl: 120rem;
+  --breakpoint-4xl: 160rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-brand), ui-sans-serif, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-negative: var(--negative);
+  --color-critical: var(--critical);
+  --color-critical-foreground: var(--critical-foreground);
+  --color-positive: var(--positive);
+  --color-warning: var(--warning);
+  --color-seq-1: var(--seq-1);
+  --color-seq-2: var(--seq-2);
+  --color-seq-3: var(--seq-3);
+  --color-seq-4: var(--seq-4);
+  --color-info: var(--info);
+  --color-scrim: var(--scrim);
+}
+
+* { border-color: var(--border); }
+
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* Números sempre tabulares; nada de zero cortado. */
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Foco só para teclado, neutro (nunca anel colorido). */
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+input:focus-visible, textarea:focus-visible { outline: none; }
+
+/* Gráficos: sem contorno ao clicar; texto de tooltip e legenda nas cores do tema. */
+.recharts-wrapper, .recharts-wrapper *, .recharts-wrapper *:focus, .recharts-wrapper *:focus-visible { outline: none; }
+.recharts-tooltip-item, .recharts-tooltip-item-name, .recharts-tooltip-item-value { color: var(--foreground) !important; }
+.recharts-legend-item-text { color: var(--muted-foreground) !important; }
+.recharts-cartesian-axis-tick-value { fill: var(--chart-axis); }
+.recharts-cartesian-grid line { stroke: var(--chart-grid); }
+
+/* Toque: resposta imediata ao pressionar (no celular não existe hover). Hover NÃO move nada. */
+@layer base {
+  /* Tudo que é clicável mostra a mãozinha (o Tailwind v4 deixa botão com a seta padrão). */
+  button:not(:disabled), [role="button"]:not([aria-disabled="true"]), a[href], summary, label[for], select, [type="checkbox"], [type="radio"] { cursor: pointer; }
+}
+
+@layer base {
+  :where(a[href], button:not(:disabled), summary, select) {
+    transition: transform 120ms ease, opacity 120ms ease, background-color 150ms ease;
+    touch-action: manipulation;
+  }
+  :where(a[href], button:not(:disabled), summary):active { transform: scale(0.98); opacity: 0.85; }
+}
+
+/* Rolagem horizontal sem barra (abas e chips). */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Área segura do iPhone para barras fixas no rodapé. */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+/* Entrada de barras e réguas feitas à mão (os gráficos Recharts usam chart.enter + useChartMotion). */
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.grow-x { transform-origin: left center; animation: grow-x 0.8s ease-out both; }
+.grow-y { transform-origin: center bottom; animation: grow-y 0.8s ease-out both; }
+.animate-in { animation: fade-in 0.2s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-in, .grow-x, .grow-y { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* Celular e tablet: sem barra de rolagem visível (o dedo rola; a barra só ocupa espaço e destoa). */
+@media (max-width: 63.99rem) {
+  html, body, * { scrollbar-width: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+}
