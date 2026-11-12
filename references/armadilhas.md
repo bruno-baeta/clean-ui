@@ -61,6 +61,19 @@
 - **Erro de hidratação com `data-darkreader-*` ou `cz-shortcut-listen`** vem de extensão do navegador (Dark Reader, ColorZilla), não do app. Evite no layout raiz: `metadata.other = { 'darkreader-lock': 'true' }` (o Dark Reader deixa o site em paz; ele já tem tema escuro próprio, valor vazio não é renderizado) e `suppressHydrationWarning` no `<body>`.
 - **Rotas com limite de chamadas** (ex.: 60 por minuto): o `check-ui` em muitas larguras passa do limite e fotografa a tela de erro. Rode em grupos menores ou espere um minuto entre as rodadas, e não confunda o achado com problema de layout.
 
+## Linha de lista grossa no celular
+
+- **Sintoma:** na lista de métodos, com chip "Hipótese" e "7 versões" numa coluna fixa de 108 px à direita, sobravam ~160 px para o texto: "Cobertura combinatória" e "Mais chance de ao menos uma quadra" quebravam em 2 linhas cada, e cada item ficava com uma altura diferente. O usuário achou "muito grosso e estranho".
+- **Correção:** abaixo de ~460 px de largura da lista, o grid vira `ícone | texto | chevron` e o chip e o valor descem para uma linha embaixo da descrição. Todas as linhas ficam iguais (3 linhas curtas) e o texto usa a largura toda.
+- **Tela larga também:** lista quebrada em colunas de linhas (`ColumnRows`) com 3 colunas no ultrawide deixa cada coluna com ~500 px; com minigráfico, chip e número fixos sobravam ~130 px para o nome, igual ao celular. Correção: cada coluna de linhas precisa de folga para o texto (≥ ~240 px para nome curto, a frase inteira para pergunta longa). Prefira menos colunas (nunca 3 com menos de ~680 px cada), mostre colunas extras (minigráfico, "Próximo passo") só quando sobra largura, e use o arranjo empilhado (chip e valor embaixo do texto) em qualquer largura onde a tabela não cabe.
+- **Ao medir:** contar linhas pelo texto (`range.getClientRects()`), não pela altura do elemento; um chip de `h-6` com `line-height` menor parece ter 2 linhas.
+- **Grade de cartões com quantidade fixa** (ex.: 15 jogos): `auto-fill` deixa a última linha incompleta (15 em 4 colunas). Meça a largura e escolha o maior número de colunas que divide a quantidade (3 ou 5), sem cair abaixo da metade do que cabe.
+
+## Celular: seletor e estado vazio que não ocupam o espaço
+
+- **Seletor no cabeçalho do cartão:** no celular a ação do cartão quebra para a linha de baixo, mas continua com a largura do conteúdo (`ml-auto` + `w-44`) e fica encostada à direita. Corrija com a ação em linha própria e largura toda (`max-sm:ml-0 max-sm:basis-full` no invólucro, select com `flex-1 sm:w-44 sm:flex-none`, setas nas pontas). Seletor que é o título do bloco (ex.: método A x método B) também: `w-full` no estreito, `w-auto` só no largo (`@xl:w-auto`).
+- **Estado vazio que não estica:** `flex-1` só funciona se toda a cadeia até a raiz for flex em coluna. A moldura do app era `min-h-dvh lg:flex`: no celular não era flex, então o `main` não crescia e o vazio parava em `min-h-[60dvh]`, com um buraco antes da barra inferior. A raiz precisa ser `flex min-h-dvh flex-col lg:flex-row`; aí tire os `min-h-[NNdvh]` fixos do vazio.
+
 ## Cartão que estica (vãos por dentro)
 
 Caso real (Comparar métodos do MegaLab, ultrawide, 2026-11-12): "tem espaço em branco na tela, e as rows do primeiro card poderiam estar centralizadas".

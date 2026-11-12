@@ -1,12 +1,12 @@
 # clean-ui
 
-Uma skill do [Claude Code](https://claude.com/claude-code) para criar interfaces **minimalistas, com dados em primeiro lugar, que cabem na tela e funcionam nos temas claro e escuro**, com cara de produto feito por gente, não de tela gerada por IA.
+Uma skill no padrão [Agent Skills](https://agentskills.io) (Claude Code, Codex, GitHub Copilot, Cursor, Gemini CLI e Windsurf) para criar interfaces **minimalistas, com dados em primeiro lugar, que cabem na tela e funcionam nos temas claro e escuro**, com cara de produto feito por gente, não de tela gerada por IA.
 
 Cada regra daqui nasceu de um pedido real de ajuste: um card desalinhado, um gráfico que passava da borda, um texto que ninguém lia. Por isso a skill trata as regras como requisito, não como sugestão.
 
 ## O que ela faz
 
-Quando você pede para criar, ajustar ou revisar uma tela, componente, gráfico ou e-mail HTML, o Claude carrega a skill e segue um processo:
+Quando você pede para criar, ajustar ou revisar uma tela, componente, gráfico ou e-mail HTML, o agente carrega a skill e segue um processo:
 
 1. **Informação antes do layout.** Primeiro decide o que mostrar, em que ordem de prioridade e onde cada coisa fica. Só depois desenha.
 2. **Monta com um kit pronto**, medido em dashboards de referência: cards, indicadores, chips, abas, tabelas e gráficos.
@@ -28,19 +28,51 @@ Quando você pede para criar, ajustar ou revisar uma tela, componente, gráfico 
 
 ## Instalação
 
-Clone na pasta de skills do Claude Code:
+Clone em qualquer pasta e rode o instalador (precisa de Node 18 ou mais novo):
 
 ```bash
 git clone https://github.com/bruno-baeta/clean-ui.git ~/.claude/skills/clean-ui
+node ~/.claude/skills/clean-ui/install.mjs
 ```
 
-Na próxima conversa ela aparece como `/clean-ui`. O Claude também a usa sozinho sempre que o trabalho for de interface.
+O instalador encontra os agentes da máquina e coloca a skill na pasta de cada um, com link, para um `git pull` atualizar todos de uma vez (`--copy` copia em vez de linkar):
+
+| Agente | Pasta do usuário | Como usa |
+|---|---|---|
+| Claude Code | `~/.claude/skills/clean-ui` | Carrega sozinho em trabalho de interface; também como `/clean-ui` |
+| Codex | `~/.agents/skills` e `~/.codex/skills` | Carrega sozinho pela descrição |
+| GitHub Copilot (VS Code e CLI) | `~/.copilot/skills` | Carrega sozinho pela descrição |
+| Cursor | `~/.cursor/skills` | Carrega sozinho pela descrição |
+| Gemini CLI | `~/.gemini/skills` | Carrega sozinho pela descrição |
+| Windsurf | Sem pasta de usuário | Use o modo projeto, abaixo |
+
+Use `--only=codex,cursor` para escolher os agentes e `--dry-run` para ver o que ele faria antes.
+
+### Num projeto (para o time todo)
+
+```bash
+node ~/.claude/skills/clean-ui/install.mjs --project caminho/do/projeto
+```
+
+Copia a skill para `.agents/skills/clean-ui` (a pasta comum que Codex, Copilot, Cursor e Gemini leem) e escreve uma regra curta para cada agente, apontando para ela:
+
+| Arquivo | Agente |
+|---|---|
+| `AGENTS.md` (bloco marcado, sem apagar o que já existe) | Codex e outros que leem AGENTS.md |
+| `.github/instructions/clean-ui.instructions.md` | GitHub Copilot, nos arquivos de interface |
+| `.cursor/rules/clean-ui.mdc` | Cursor, nos arquivos de interface |
+| `GEMINI.md` (bloco marcado) | Gemini CLI |
+| `.windsurf/rules/clean-ui.md` | Windsurf, nos arquivos de interface |
+| `.claude/skills/clean-ui` | Claude Code, quando o projeto já tem `.claude` |
+
+Rodar de novo atualiza tudo no lugar. Faça commit dessas pastas no projeto.
 
 ## Conteúdo
 
 ```
 clean-ui/
 ├── SKILL.md                    regras, processo e checklist
+├── install.mjs                 instala nos agentes (usuário ou projeto)
 ├── references/
 │   ├── informacao.md           o que mostrar, prioridade e posição
 │   ├── padroes-aprovados.md    blocos que já foram aprovados
@@ -79,7 +111,7 @@ Opções: `--widths=390,1366x650`, `--dark` ou `--light`, `--user=` e `--pass=` 
 
 ## Stack
 
-Os componentes e tokens são para **React/Next.js com Tailwind CSS v4**, gráficos com **Recharts**, ícones **lucide-react** e tema com **next-themes**. As regras valem para qualquer stack.
+Os componentes e tokens são para **React/Next.js com Tailwind CSS v4**, gráficos com **Recharts**, ícones **lucide-react** e tema com **next-themes**. As regras valem para qualquer stack. Os scripts rodam com Node em qualquer agente que tenha terminal.
 
 ---
 

@@ -144,7 +144,9 @@ function audit(theme) {
     let gap = boxes[0][0] - cr.top, end = boxes[0][1], empty = Math.max(0, boxes[0][0] - cr.top);
     for (const [t, b] of boxes) { if (t > end) empty += t - end; gap = Math.max(gap, t - end); end = Math.max(end, b); }
     gap = Math.max(gap, cr.bottom - end); empty += Math.max(0, cr.bottom - end);
-    if (gap > Math.max(140, cr.height * 0.25)) add('cartão com vão vazio por dentro (conteúdo preso num canto)', card, `${Math.round(gap)} px sem nada em ${Math.round(cr.height)} px`);
+    // Estado vazio centralizado de propósito (vão igual em cima e embaixo, poucas peças) não conta.
+    const centered = boxes.length <= 6 && Math.abs((boxes[0][0] - cr.top) - (cr.bottom - end)) < 32;
+    if (!centered && gap > Math.max(140, cr.height * 0.25)) add('cartão com vão vazio por dentro (conteúdo preso num canto)', card, `${Math.round(gap)} px sem nada em ${Math.round(cr.height)} px`);
     // Linhas espalhadas (justify-around/between num cartão esticado): nenhum vão grande sozinho, mas a soma é mais da metade.
     // Estado vazio (ícone + uma linha no meio) tem poucas peças e fica de fora.
     else if (cr.height > 400 && boxes.length >= 6 && empty > cr.height * 0.5) add('cartão com conteúdo espalhado (mais da metade da altura vazia)', card, `${Math.round(empty)} px vazios em ${Math.round(cr.height)} px`);
@@ -209,6 +211,35 @@ function audit(theme) {
       const lines = Math.round(r.height / lh);
       const fsz = parseFloat(getComputedStyle(el).fontSize) || 14;
       if (lines >= 3 && (t.length / lines < 6 || r.width < fsz * 6)) { hits++; add('texto espremido (coluna estreita demais: poucas letras por linha)', el, `${lines} linhas, ${Math.round(r.width)}px`); }
+    }
+  }
+
+  // Linha de lista com título ou descrição quebrando porque uma coluna à direita (chip, valor) espreme o texto.
+  // Vale em toda largura: no ultrawide a lista em 3 colunas espreme igual ao celular.
+  {
+    let hits = 0;
+    for (const list of document.querySelectorAll('ul, ol')) {
+      if (hits >= 3) break;
+      const items = [...list.children].filter((li) => li.tagName === 'LI' && visible(li));
+      if (items.length < 3) continue;
+      let wrapped = 0, sample = null;
+      for (const li of items) {
+        const lr = li.getBoundingClientRect();
+        const texts = [...li.querySelectorAll('*')].filter((el) => !el.children.length && !el.closest('svg') && visible(el) && (el.textContent || '').trim().length >= 8);
+        const bad = texts.find((el) => {
+          // Conta as linhas pelo texto de verdade (chip de altura fixa não engana).
+          const range = document.createRange(); range.selectNodeContents(el);
+          const rects = [...range.getClientRects()].filter((q) => q.width > 1);
+          const lines = new Set(rects.map((q) => Math.round(q.top / 4))).size;
+          // Borda da coluna do texto (bloco que o contém), não do fim da última palavra: quebra de palavra deixa sobra.
+          let col = el; while (col.parentElement && getComputedStyle(col).display === 'inline') col = col.parentElement;
+          const right = col.getBoundingClientRect().right;
+          // Quebrou e ainda sobra uma coluna com conteúdo à direita do texto.
+          return lines >= 2 && lr.right - right > 64;
+        });
+        if (bad) { wrapped++; sample ||= bad; }
+      }
+      if (wrapped >= (vw < 1024 ? 2 : 1)) { hits++; add(vw < 1024 ? 'linha de lista com texto quebrando no celular (coluna à direita espreme o título/descrição: desça chip e valor para uma linha embaixo do texto)' : 'linha de lista com texto quebrando (colunas da lista estreitas demais: menos colunas de linhas, tire o minigráfico ou estreite as colunas fixas)', sample, `${wrapped} de ${items.length} linhas`); }
     }
   }
 
