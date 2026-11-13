@@ -3,7 +3,7 @@
  * Prints + verificação visual automática das regras da skill clean-ui.
  *
  * Uso:
- *   node check-ui.mjs <url> [<url>...] [--out=pasta] [--widths=320,390,1366x650,1536x730,1920x950,2560x960,2752x1100,3440x1300] [--themes=dark,light] [--user=x --pass=y]
+ *   node check-ui.mjs <url> [<url>...] [--out=pasta] [--widths=320,390,1366x650,1536x730,1920x950,2200x1100,2560x960,2560x1300,2752x1100,3440x1300] [--themes=dark,light] [--user=x --pass=y]
  *
  * Para cada URL, tamanho de tela e tema (escuro e claro por padrão): tira print da página inteira e mede:
  *   - rolagem horizontal (algo estourando a largura)
@@ -33,10 +33,10 @@ import { createRequire } from 'node:module';
 const args = process.argv.slice(2);
 const opt = Object.fromEntries(args.filter((a) => a.startsWith('--')).map((a) => { const [k, v] = a.slice(2).split('='); return [k, v ?? true]; }));
 const urls = args.filter((a) => !a.startsWith('--'));
-if (!urls.length) { console.log('Uso: node check-ui.mjs <url> [--out=pasta] [--widths=320,390,1366x650,1536x730,1920x950,2560x960,2752x1100,3440x1300] [--themes=dark,light] [--user=x --pass=y]'); process.exit(2); }
+if (!urls.length) { console.log('Uso: node check-ui.mjs <url> [--out=pasta] [--widths=320,390,1366x650,1536x730,1920x950,2200x1100,2560x960,2560x1300,2752x1100,3440x1300] [--themes=dark,light] [--user=x --pass=y]'); process.exit(2); }
 const out = resolve(opt.out || 'ui-check');
 // Alturas = área útil do navegador (tela menos barras), não a tela inteira. "390" usa 844 no mobile e 900 no web.
-const sizes = String(opt.widths || '320,390,1366x650,1536x730,1920x950,2560x960,2752x1100,3440x1300').split(',').map((v) => {
+const sizes = String(opt.widths || '320,390,1366x650,1536x730,1920x950,2200x1100,2560x960,2560x1300,2752x1100,3440x1300').split(',').map((v) => {
   const [w, h] = v.toLowerCase().split('x').map(Number);
   return { width: w, height: h || (w < 800 ? 844 : 900) };
 });
@@ -160,6 +160,51 @@ function audit(theme) {
       if (inset >= 8 && inset <= 40 && Math.round(inset) % 4 !== 0 && scaleHits++ < 3) add('recuo do conteúdo fora da escala de 4 px', card, Math.round(inset) + ' px');
       const near = leaves(card).find((e) => { const d = e.getBoundingClientRect().left - left - inset; return d >= 1.5 && d <= 6 && e.tagName !== 'svg' && !e.closest('button, a, [class*="chip"], [class*="rounded-md"], [class*="rounded-full"]'); });
       if (near && axisHits++ < 3) add('quase alinhado à esquerda (alinhe no eixo do cartão ou afaste 12 px ou mais)', near, `${Math.round(near.getBoundingClientRect().left - left - inset)} px depois do eixo`);
+    }
+  }
+
+  // Erros grosseiros que passaram no MegaLab (2026-11-13): texto por cima de texto, grupo de itens iguais
+  // (dezenas) quebrando com sobra e lista partida em colunas de linhas lado a lado no mesmo cartão.
+  {
+    // 1. Texto por cima de texto: caixas de texto de elementos diferentes que se sobrepõem.
+    const boxes = [];
+    const pinned = (e) => { for (let x = e; x && x !== document.body; x = x.parentElement) if (/fixed|sticky/.test(getComputedStyle(x).position)) return true; return false; };
+    for (const el of all) {
+      if (pinned(el)) continue; // barra fixa passa por cima do conteúdo de propósito
+      if (el.closest('svg, .recharts-wrapper, canvas, [role="tooltip"], [role="dialog"]') || getComputedStyle(el).position === 'absolute' || el.closest('.sr-only')) continue;
+      for (const n of el.childNodes) {
+        if (n.nodeType !== 3 || !n.textContent.trim()) continue;
+        const rg = document.createRange(); rg.selectNodeContents(n);
+        for (const r of rg.getClientRects()) if (r.width > 2 && r.height > 6) boxes.push({ el, l: r.left, r: r.right, t: r.top, b: r.bottom });
+      }
+    }
+    boxes.sort((a, b) => a.t - b.t);
+    let over = 0;
+    for (let i = 0; i < boxes.length && over < 3; i++) {
+      for (let j = i + 1; j < boxes.length && boxes[j].t < boxes[i].b - 4; j++) {
+        const a = boxes[i], b = boxes[j];
+        if (a.el === b.el || a.el.contains(b.el) || b.el.contains(a.el)) continue;
+        if (Math.min(a.r, b.r) - Math.max(a.l, b.l) > 3 && Math.min(a.b, b.b) - Math.max(a.t, b.t) > 4) { over++; add('texto por cima de texto (coluna estreita demais para o conteúdo)', a.el, `com "${(b.el.textContent || '').trim().slice(0, 24)}"`); break; }
+      }
+    }
+    // 2. Grupo de itens iguais (dezenas, avatares, pontos) quebrando em mais de uma linha.
+    let wraps = 0;
+    for (const el of all) {
+      const kids = [...el.children].filter(visible);
+      if (kids.length < 4 || kids.length > 12 || wraps >= 3) continue;
+      const rs = kids.map((k) => k.getBoundingClientRect());
+      const same = rs.every((r) => Math.abs(r.width - rs[0].width) < 1 && Math.abs(r.height - rs[0].height) < 1 && r.width <= 64 && Math.abs(r.width - r.height) < 2);
+      if (!same || !kids.every((k) => parseFloat(getComputedStyle(k).borderRadius) >= rs[0].width / 2 - 1)) continue;
+      const tops = new Set(rs.map((r) => Math.round(r.top)));
+      if (tops.size > 1) { wraps++; add('grupo de itens iguais quebrando em mais de uma linha (reserve a largura do grupo inteiro)', el, `${kids.length} itens em ${tops.size} linhas`); }
+    }
+    // 3. Lista partida em colunas de linhas lado a lado dentro do mesmo cartão (linhas sem fundo próprio).
+    for (const list of all.filter((e) => e.matches('ul, ol') && getComputedStyle(e).display === 'grid')) {
+      const lis = [...list.children].filter((c) => c.tagName === 'LI' && visible(c));
+      if (lis.length < 4 || lis.some(bg)) continue;
+      const lefts = new Set(lis.map((c) => Math.round(c.getBoundingClientRect().left)));
+      const isRow = lis.every((c) => c.getBoundingClientRect().width >= 280 && c.getBoundingClientRect().height <= 140);
+      if (lefts.size > 1 && isRow) add('lista partida em colunas de linhas lado a lado no mesmo cartão (uma coluna de linhas, ou um cartão por item)', list, `${lefts.size} colunas`);
     }
   }
 
@@ -389,7 +434,15 @@ for (const url of urls) {
     } catch (e) { console.log(`\n${url} @ ${width}x${height} ${theme}: não abriu (${e.message.split('\n')[0]})`); await ctx.close(); continue; }
     // Espera o anel de carregando sumir (até 20 s) para medir a tela de verdade.
     await page.waitForFunction(() => !document.querySelector('[role="status"][aria-label="Carregando"], [aria-busy="true"]'), null, { timeout: 20000 }).catch(() => {});
+    // Espera o layout assentar: alturas medidas em JS (gráfico pela janela, linhas pela altura) mudam depois da carga.
+    // Mede a altura da página até ficar igual em duas leituras seguidas (no máximo ~4 s).
     await page.waitForTimeout(600);
+    for (let i = 0, last = -1; i < 7; i++) {
+      const hNow = await page.evaluate(() => document.documentElement.scrollHeight + [...document.querySelectorAll('.recharts-wrapper')].reduce((t, e) => t + e.clientHeight, 0)).catch(() => last);
+      if (hNow === last) break;
+      last = hNow;
+      await page.waitForTimeout(500);
+    }
     const vazia = await page.evaluate(() => {
       const t = document.body.innerText.trim();
       if (document.querySelector('[role="status"][aria-label="Carregando"]')) return 'ainda carregando depois de 20 s';
