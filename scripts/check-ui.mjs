@@ -124,6 +124,45 @@ function audit(theme) {
     }
   }
 
+  // Espaçamento e alinhamento (references/medidas.md): um gap só entre cartões, mesmo recuo do conteúdo
+  // em cartões vizinhos, tudo na escala de 4 px e nada "quase alinhado" no eixo esquerdo do cartão.
+  {
+    const isCard = (e) => { const r = e.getBoundingClientRect(); return bg(e) && parseFloat(getComputedStyle(e).borderRadius) >= 8 && r.height > 48 && r.width >= 120 && !e.closest('nav, aside, header, button, a, [role="dialog"], [role="tooltip"]'); };
+    const cardSet = new Set(all.filter(isCard));
+    // Peças que marcam onde o conteúdo começa: elementos com texto direto e ícones.
+    const leaves = (card) => [...card.querySelectorAll('*')].filter((e) => visible(e) && (e.tagName === 'svg' || [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) && !e.closest('svg svg, .recharts-wrapper, canvas'));
+    const insetOf = (card) => { const xs = leaves(card).map((e) => e.getBoundingClientRect().left - card.getBoundingClientRect().left).filter((x) => x >= 0); return xs.length ? Math.min(...xs) : null; };
+    let gapHits = 0, insetHits = 0, axisHits = 0, scaleHits = 0;
+    for (const parent of new Set([...cardSet].map((c) => c.parentElement))) {
+      const cards = [...parent.children].filter((c) => cardSet.has(c));
+      if (cards.length < 2) continue;
+      const rs = cards.map((c) => c.getBoundingClientRect());
+      const gaps = new Set();
+      for (const a of rs) {
+        const right = rs.filter((b) => b !== a && Math.abs(b.top - a.top) < 4 && b.left >= a.right - 1).sort((x, y) => x.left - y.left)[0];
+        const below = rs.filter((b) => b !== a && Math.abs(b.left - a.left) < 4 && b.top >= a.bottom - 1).sort((x, y) => x.top - y.top)[0];
+        if (right) gaps.add(Math.round(right.left - a.right));
+        if (below) gaps.add(Math.round(below.top - a.bottom));
+      }
+      const g = [...gaps].filter((x) => x > 0 && x <= 64).sort((a, b) => a - b);
+      if (g.length > 1 && g[g.length - 1] - g[0] > 1 && gapHits++ < 3) add('espaços diferentes entre cartões vizinhos (use um gap só na grade)', parent, g.join(' e ') + ' px');
+      const offGap = g.find((x) => x % 4 !== 0);
+      if (offGap && scaleHits++ < 3) add('espaço fora da escala de 4 px entre cartões', parent, offGap + ' px');
+      const insets = cards.map(insetOf).filter((x) => x !== null).map(Math.round);
+      const uniq = [...new Set(insets)].sort((a, b) => a - b);
+      if (uniq.length > 1 && uniq[uniq.length - 1] - uniq[0] >= 2 && uniq[uniq.length - 1] - uniq[0] <= 16 && insetHits++ < 3) add('conteúdo começa em distâncias diferentes da borda em cartões vizinhos (mesmo padding em todos)', cards[insets.indexOf(uniq[uniq.length - 1])], uniq.join(' e ') + ' px');
+    }
+    for (const card of cardSet) {
+      if ([...card.querySelectorAll('*')].some((e) => cardSet.has(e))) continue; // só o cartão mais interno
+      const left = card.getBoundingClientRect().left;
+      const inset = insetOf(card);
+      if (inset === null) continue;
+      if (inset >= 8 && inset <= 40 && Math.round(inset) % 4 !== 0 && scaleHits++ < 3) add('recuo do conteúdo fora da escala de 4 px', card, Math.round(inset) + ' px');
+      const near = leaves(card).find((e) => { const d = e.getBoundingClientRect().left - left - inset; return d >= 1.5 && d <= 6 && e.tagName !== 'svg' && !e.closest('button, a, [class*="chip"], [class*="rounded-md"], [class*="rounded-full"]'); });
+      if (near && axisHits++ < 3) add('quase alinhado à esquerda (alinhe no eixo do cartão ou afaste 12 px ou mais)', near, `${Math.round(near.getBoundingClientRect().left - left - inset)} px depois do eixo`);
+    }
+  }
+
   // Vão por dentro do cartão: o cartão esticou (flex-1, linha do grid) e o conteúdo ficou espalhado ou num canto
   // (linhas com justify-around, bloco preso em cima). Mede o maior trecho vertical sem nada visível.
   for (const card of all) {

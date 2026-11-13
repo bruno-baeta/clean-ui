@@ -35,7 +35,7 @@
 ## Celular
 
 - **Barra inferior fixa cobre o que está embaixo:** ao rolar até um botão (o "i", um campo), ele para atrás da barra. O botão do "i" do kit já tem `scroll-mb-24` (só abaixo de `lg`); faça o mesmo em campos e botões perto do fim da página.
-- **`tabular-nums` na Plus Jakarta** desenha o "1" largo: em texto corrido ("1 a 1 de 1") parece fonte monoespaçada. Use `tabular` só em colunas de números alinhados.
+- **`tabular-nums` em fontes como a Plus Jakarta** desenha o "1" largo: em texto corrido ("1 a 1 de 1") parece fonte monoespaçada. Use `tabular` só em colunas de números alinhados.
 
 ## Várias frentes ao mesmo tempo
 

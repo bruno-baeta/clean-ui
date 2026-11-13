@@ -1,6 +1,8 @@
 # Anatomia de dashboard (medida nas referências do usuário)
 
-As fotos estão em `exemplos-dashboards/`. O usuário quer que **as ideias sejam copiadas de verdade**: espaçamento, posição de cada texto, formato dos chips. Este arquivo traduz as fotos em medidas. Os componentes prontos estão em `assets/dashboard.tsx`.
+As fotos estão em `exemplos-dashboards/`. Elas definem o **nível de acabamento** que o usuário gosta, e este arquivo traduz esse acabamento em medidas. Use as medidas como **valores de partida** quando a direção do projeto não pedir outra coisa. O que é princípio (respiro entre rótulo e número, chip suave com seta, título discreto, marcas finas, tabela numa linha só, nenhum cartão colorido) vale sempre; o que é estilo (raio de 20 px, título cinza de 15 px, ícone em círculo, número de 30 px, barras em pílula, separador tracejado) pode mudar com a direção visual, desde que coerente no app inteiro. Os componentes prontos estão em `assets/dashboard.tsx`.
+
+**Quando uma medida daqui discordar de `medidas.md`, vale `medidas.md`:** ele é a escolha direta do usuário (2026-11-13), mais justa que as fotos (padding 16, número 36/600 a 4 px do rótulo, 12 entre cartões).
 
 ## Superfície
 
@@ -8,9 +10,9 @@ As fotos estão em `exemplos-dashboards/`. O usuário quer que **as ideias sejam
 |---|---|---|
 | Fundo da página | um degrau mais escuro que o cartão (claro `#f1f1f4`, escuro `#0b0b0e`) | todas |
 | Cartão | `rounded-[20px] bg-card`, **sem contorno**, sem sombra no claro | Skymetrics, Spectra |
-| Padding do cartão | 24 px (`p-6`; 20 px no celular) | Skymetrics |
-| Espaço entre cartões | 12 a 16 px | Skymetrics |
-| Margem da página | 16 a 24 px | todas |
+| Padding do cartão | 16 px (`p-4`) | calibragem |
+| Espaço entre cartões | 12 px | calibragem |
+| Margem da página | 12 px no web, 16 px no celular | calibragem |
 | Título da página | 28 px semibold; frescor do dado em 13 px cinza ao lado ou embaixo | Skymetrics "General metrics" |
 | Cartão colorido de destaque | **não usar** (o usuário reprovou) | |
 
@@ -27,11 +29,11 @@ Total de vendas subiu 7% na semana                                       ← (op
 ## Indicador (KPI)
 
 ```
-Pedidos                              (◎)      ← 15 px cinza, ícone em círculo tingido 36 px
-2.792                                          ← 30 px, peso médio, tabular, 16 px abaixo do rótulo
-[↗ 11%]  Vs semana anterior                    ← chip + 13 px cinza na MESMA linha, 12 px abaixo do número
+Pedidos                              (◎)      ← 14 px cinza, ícone em círculo tingido 36 px
+2.792                                          ← 36 px, peso 600, tabular, 4 px abaixo do rótulo
+[↗ 11%]  Vs semana anterior                    ← chip + 13 px cinza na MESMA linha, 8 px abaixo do número
 ```
-- Altura total ~140 px com padding de 24 px. Muito ar entre as três linhas: é o que dá o ar "calmo".
+- Padding de 16 px, cartão justo: o ar fica entre os cartões e os grupos, não entre as três linhas.
 - Todos os indicadores iguais: mesma estrutura, mesma altura (Skymetrics tem 5 lado a lado).
 - No celular: 1 por linha no 320, 2 por linha a partir de 390 só se o número couber sem quebrar.
 - Sem variação disponível: só o texto cinza ("Seg, 26 out", "Recorde do período").

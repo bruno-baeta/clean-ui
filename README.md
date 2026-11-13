@@ -2,16 +2,21 @@
 
 Uma skill no padrão [Agent Skills](https://agentskills.io) (Claude Code, Codex, GitHub Copilot, Cursor, Gemini CLI e Windsurf) para criar interfaces **minimalistas, com dados em primeiro lugar, que cabem na tela e funcionam nos temas claro e escuro**, com cara de produto feito por gente, não de tela gerada por IA.
 
-Cada regra daqui nasceu de um pedido real de ajuste: um card desalinhado, um gráfico que passava da borda, um texto que ninguém lia. Por isso a skill trata as regras como requisito, não como sugestão.
+A skill não impõe um visual. Ela tem três camadas:
+
+1. **Proibido.** Erros que já irritaram alguém de verdade (card desalinhado, gráfico passando da borda, texto que ninguém lê, hover que pula). Nunca acontecem.
+2. **Acabamento obrigatório.** Cabe na tela, simetria, dois temas, contraste, estados. Os scripts medem.
+3. **Escolhas do agente.** Paleta, fonte, raio, densidade, composição e uma assinatura visual por projeto, guiadas por fundamentos de design. Dois projetos feitos com a skill não devem parecer a mesma tela com outro logo.
 
 ## O que ela faz
 
 Quando você pede para criar, ajustar ou revisar uma tela, componente, gráfico ou e-mail HTML, o agente carrega a skill e segue um processo:
 
-1. **Informação antes do layout.** Primeiro decide o que mostrar, em que ordem de prioridade e onde cada coisa fica. Só depois desenha.
-2. **Monta com um kit pronto**, medido em dashboards de referência: cards, indicadores, chips, abas, tabelas e gráficos.
-3. **Confere com scripts**, que tiram prints em vários tamanhos de tela, nos dois temas, e apontam o que quebrou.
-4. **Mostra antes de publicar.** Nada vai para commit ou deploy sem aprovação.
+1. **Informação antes do layout.** Primeiro decide o que mostrar, em que ordem de prioridade e onde cada coisa fica.
+2. **Direção visual própria.** Escreve em 5 linhas a personalidade, a cor, a tipografia, a forma e a assinatura do projeto, tiradas do assunto, e escolhe a composição pela pergunta da tela (não pela faixa de 4 indicadores de sempre).
+3. **Monta**, reaproveitando o comportamento do kit (balão que não sai da tela, lista paginada pela altura, animação de gráfico) com o visual do projeto.
+4. **Confere com scripts**: a paleta nos dois temas, o código e prints em vários tamanhos de tela.
+5. **Mostra antes de publicar.** Nada vai para commit ou deploy sem aprovação.
 
 ## Princípios
 
@@ -21,7 +26,8 @@ Quando você pede para criar, ajustar ou revisar uma tela, componente, gráfico 
 | **Cabe na tela** | A primeira tela cabe inteira em 390×844, 1366×650, 1536×730 e 1920×950. Gráfico e mapa nunca passam da borda de baixo. |
 | **Dois temas** | Claro e escuro desde o início, seguindo o sistema, com botão para trocar. Cor sempre por token. |
 | **Simetria** | Cards lado a lado com a mesma altura, colunas alinhadas, grids completos, nenhum vão dentro de um card. |
-| **Cor com propósito** | Base neutra, uma cor de destaque, paletas validadas para contraste e daltonismo. Número nunca pintado. |
+| **Cor com propósito** | Paleta própria por projeto, base neutra e uma cor de destaque, conferida para contraste e daltonismo. Número nunca pintado. |
+| **Cara própria** | Cada projeto com direção visual e assinatura próprias; nada de esqueleto repetido. |
 | **Tela larga ganha colunas** | Em 1920, 2560 e ultrawide 21:9 a tela abre mais colunas em vez de esticar. |
 | **Toque responde** | Mãozinha em tudo que é clicável, estado pressionado no celular, hover que só muda o fundo. |
 | **Uma lista por tela** | Nada de várias listas parecidas: uma lista com filtro ou ordem. |
@@ -75,27 +81,37 @@ clean-ui/
 ├── install.mjs                 instala nos agentes (usuário ou projeto)
 ├── references/
 │   ├── informacao.md           o que mostrar, prioridade e posição
+│   ├── direcao-visual.md       a cara de cada projeto, composições e teste da mesmice
+│   ├── fundamentos.md          hierarquia, espaço, grade, tipo, cor, forma, estados
 │   ├── padroes-aprovados.md    blocos que já foram aprovados
 │   ├── armadilhas.md           erros técnicos que já custaram retrabalho
 │   ├── migracao.md             roteiro para redesenhar um app inteiro
 │   ├── dashboards.md           princípios e composições de dashboard
-│   ├── anatomia-dashboard.md   as referências traduzidas em medidas
-│   ├── paletas.md              paletas Cobalto, Índigo, Ciano e Coral
+│   ├── anatomia-dashboard.md   o acabamento das referências em medidas de partida
+│   ├── paletas.md              papéis da paleta, como montar e 4 exemplos
 │   ├── exemplos.md             casos reais de errado e certo
 │   └── exemplos-dashboards/    as 7 referências visuais
 ├── assets/
-│   ├── tokens.css              temas, fonte, foco e gráficos (Tailwind v4)
+│   ├── tokens.css              base dos dois temas, foco e gráficos (Tailwind v4)
 │   ├── ui.tsx                  componentes base
 │   ├── dashboard.tsx           kit de dashboard (Recharts)
 │   └── painel.tsx              ajudantes de altura e mapa
 └── scripts/
+    ├── paleta.mjs              confere (e gera) a paleta nos dois temas
     ├── lint-ui.mjs             revisão estática do código
     └── check-ui.mjs            prints e medidas no navegador
 ```
 
 ## Scripts
 
-**`lint-ui`** varre o código atrás de hover que move, texto cortado com "…", bordas coloridas, fontes proibidas, cor fixa que quebra um dos temas e outros deslizes.
+**`paleta`** confere a paleta do projeto nos dois temas: contraste de texto, destaque, chips, eixos, escala ordenada e se as séries do gráfico se distinguem para daltônicos. Também gera um ponto de partida a partir de uma cor.
+
+```bash
+node ~/.claude/skills/clean-ui/scripts/paleta.mjs check src/app/globals.css
+node ~/.claude/skills/clean-ui/scripts/paleta.mjs gerar --destaque=#4d7c4a --neutro=quente
+```
+
+**`lint-ui`** varre o código atrás de hover que move, texto cortado com "…", bordas coloridas, fontes proibidas, cor fixa ou solta fora dos tokens e outros deslizes.
 
 ```bash
 node ~/.claude/skills/clean-ui/scripts/lint-ui.mjs src

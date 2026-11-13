@@ -90,7 +90,7 @@ const BTN = {
   danger: 'bg-critical text-critical-foreground hover:opacity-90',
 };
 export function Button({ variant = 'primary', className, ...p }: ComponentProps<'button'> & { variant?: keyof typeof BTN }) {
-  return <button className={cn('inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold disabled:opacity-50 [&>svg]:size-4', BTN[variant], className)} {...p} />;
+  return <button className={cn('inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-[18px] text-sm font-semibold sm:min-h-10 disabled:opacity-50 [&>svg]:size-[18px]', BTN[variant], className)} {...p} />;
 }
 
 /** Barra de ações fixa no rodapé (mobile); no web volta ao fluxo normal. */

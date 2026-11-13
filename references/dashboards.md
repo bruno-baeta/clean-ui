@@ -2,7 +2,7 @@
 
 Base: Nielsen Norman Group (atributos pré-atentivos), Stephen Few (*Information Dashboard Design*), IBM Carbon (paletas de dados) e o guia de visualização de dados (`dataviz`). Leia antes de criar qualquer tela que mostre números, gráficos ou mapas.
 
-**Referência visual que manda:** as imagens em `exemplos-dashboards/`, escolhidas pelo usuário como "dashboards modernos". O acabamento medido está em `anatomia-dashboard.md` e o kit em `assets/dashboard.tsx` (cartões de 20 px sem contorno, título cinza, número médio grande, chip de variação verde/vermelho com seta, barras em pílula com uma destacada, tabela limpa com abas; nenhum cartão colorido). Se algo aqui conflitar com as imagens, as imagens vencem.
+**Régua de acabamento:** as imagens em `exemplos-dashboards/`, escolhidas pelo usuário como "dashboards modernos", mostram o nível de qualidade esperado (calma, respiro, título discreto, chips suaves, marcas finas, tabela limpa, nenhum cartão colorido). Medidas de partida em `anatomia-dashboard.md`, comportamento pronto em `assets/dashboard.tsx`. Elas são régua, não molde: superfície, fonte, cor, raio e composição seguem a direção visual do projeto (`direcao-visual.md`).
 
 ## 1. O que separa amador de profissional
 
@@ -32,7 +32,7 @@ Base: Nielsen Norman Group (atributos pré-atentivos), Stephen Few (*Information
 
 ## 3. Composições (varie entre projetos)
 
-Escolha **uma** pelo plano de informação (`informacao.md`): onde fica a decisão, o motivo, a situação do usuário e a lista. Não monte várias versões para o usuário escolher. Não use a mesma composição no projeto seguinte só porque funcionou no anterior.
+Escolha **uma** pelo plano de informação (`informacao.md`): onde fica a decisão, o motivo, a situação do usuário e a lista. Não monte várias versões para o usuário escolher. Não use a mesma composição no projeto seguinte só porque funcionou no anterior. Mais opções (tabela protagonista, pergunta única, quadro de etapas, agenda, comparador, feed) em `direcao-visual.md` seção 3.
 
 ### A. Herói + trilho
 Um visual dominante (mapa, gráfico principal) ocupa ~2/3; um trilho lateral empilha os números de destaque e 1 ou 2 mini gráficos. Bom quando existe uma imagem central (mapa, linha do tempo de preço).
@@ -92,7 +92,7 @@ Grade de 12 colunas em que o tamanho de cada bloco segue a importância (6+3+3, 
 └────────┴───────────────────────────┘
 ```
 
-### F. Painel operacional (centro de operações; reprovado como visual: ficou "ficção científica". Use o layout, mas com o acabamento da SKILL.md seção 9)
+### F. Painel operacional (o layout serve; o visual "centro de operações" com neon e CAIXA ALTA foi reprovado)
 Para acompanhar ao vivo: faixa de status no topo (o que precisa de ação agora), fila de eventos recentes em destaque, contexto ao lado. Números mudam no lugar, sem pular o layout.
 
 ### G. Leitura guiada (relatório)
@@ -111,8 +111,8 @@ Tamanhos úteis para testar (já descontadas as barras do navegador): 1920×950,
 
 ## 5. Cor (resumo prático)
 
-- Use uma paleta pronta de `paletas.md`. Elas já foram validadas (contraste e daltonismo) nos dois temas.
-- Base: cinzas da paleta (fundo, cartão, borda, texto) fazem ~90% da tela.
+- Monte a paleta do projeto pelos papéis de `paletas.md` e confira com `scripts/paleta.mjs check`.
+- Base: neutros da paleta (fundo, cartão, borda, texto) fazem ~90% da tela.
 - Destaque (`--primary`): ações, item selecionado e **um** dado que importa.
 - Escala ordenada (`--seq-1..4`): magnitude, níveis, faixas. Mais forte = mais escuro no claro e mais claro no escuro.
 - Categórica (`--cat-1..3`): séries sem ordem, na ordem fixa. Mais de 3 séries: "Outros" ou pequenos múltiplos.

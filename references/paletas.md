@@ -1,20 +1,38 @@
-# Paletas validadas
+# Paleta: como montar
 
-Cada paleta é um conjunto que combina: cinzas da base, uma cor de destaque, uma escala ordenada de uma cor só (`--seq-1` fraco → `--seq-4` forte) e três cores categóricas em ordem fixa. Todas passaram no validador do guia `dataviz` (`validate_palette.js`) contra o cartão claro `#ffffff` e o escuro `#111111`:
+A paleta é escolha sua, por projeto: a da marca, se houver; senão uma cor tirada do assunto e da personalidade (`direcao-visual.md`). O que não é escolha: os **papéis** (os componentes dependem deles) e a **conferência** com `scripts/paleta.mjs`.
 
-- escala ordenada: `--ordinal` (uma cor, claridade crescente, degraus visíveis, ponta fraca com contraste ≥ 2:1);
-- categóricas: `--pairs all` (faixa de claridade, daltonismo e visão normal entre todos os pares).
+## Papéis
 
-Avisos que exigem cuidado:
-- Aqua `#1baf7a` no tema claro tem contraste 2,8:1: quando usada, a série precisa de rótulo direto ou tabela.
-- A cor categórica 3 é para gráficos com 3 séries; nunca vire cor de marca.
+| Token | Papel | Regra |
+|---|---|---|
+| `--background`, `--card`, `--card-2`, `--muted`, `--accent`, `--border` | Neutros: fundo, superfícies, hover, borda | Fazem ~90% da tela. Tingidos de leve (croma 0,005 a 0,015 em OKLCH) com a matiz da marca ou com quente/frio. Cartão e fundo se distinguem, de leve. |
+| `--foreground`, `--muted-foreground` | Texto principal e secundário | 4,5:1 no mínimo sobre fundo e cartão (o principal, de preferência 7:1). |
+| `--primary`, `--primary-foreground` | Destaque: ação, seleção, o dado que importa | 3:1 sobre o cartão (4,5 se for texto); texto sobre ele 4,5:1. No escuro, mais claro e menos saturado. |
+| `--seq-1..4` | Dado ordenado (magnitude, nível, faixa) | Uma matiz só, cada degrau visivelmente mais forte; o mais fraco ainda aparece no cartão (~1,8:1 ou mais). Mais forte = mais escuro no claro, mais claro no escuro. |
+| `--cat-1..3` | Séries sem ordem, em ordem fixa | 3:1 sobre o cartão; distinguíveis entre si também para daltônicos (protanopia e deuteranopia); longe do vermelho de alerta. Mais de 3 séries: "Outros" ou pequenos múltiplos. |
+| `--critical`, `--positive`, `--warning` | Status e variação | Legíveis como texto sobre o próprio chip suave (cor a 12% sobre o cartão). Sempre com ícone, seta ou rótulo. |
+| `--chart-muted`, `--chart-grid`, `--chart-axis`, `--map-*` | Gráfico e mapa | Neutros da paleta; eixo com 3:1. |
 
-**Como usar:** projeto com marca usa a família da marca (MegaLab: Coral). Sem marca, escolha você a paleta que combina com o assunto e diga qual e por quê na entrega. Não renderize várias paletas para o usuário escolher. Copie o **bloco completo** do fim deste arquivo para o CSS do projeto, no lugar do trecho de cores do `tokens.css`. Se precisar de uma paleta nova, valide antes:
+## Como fazer
 
-```sh
-node <dataviz>/scripts/validate_palette.js "#claro,#...,#forte" --ordinal --mode light --surface "#ffffff"
-node <dataviz>/scripts/validate_palette.js "#cat1,#cat2,#cat3" --pairs all --mode dark --surface "#111111"
-```
+1. Escolha a cor de partida e o neutro (quente, frio, da marca ou puro).
+2. Gere um ponto de partida e ajuste à vontade:
+   ```sh
+   node <skill>/scripts/paleta.mjs gerar --destaque=#4d7c4a --neutro=quente
+   ```
+3. Cole no CSS do projeto, no lugar das cores do `assets/tokens.css` (nas três formas: `:root`, `@media (prefers-color-scheme: dark) { :root:not(.light) }` e `:root.dark`).
+4. Confira até não sobrar falha, e leia os avisos:
+   ```sh
+   node <skill>/scripts/paleta.mjs check src/app/globals.css
+   ```
+5. Olhe nos prints dos dois temas. Passar no script não garante que a paleta é bonita: veja se o destaque aparece só onde deve e se as séries não brigam.
+
+**Cor amarela ou muito clara como marca:** no tema claro ela não passa como texto nem como marca de gráfico sobre branco. Use a versão escurecida para texto e gráfico e a cor original só em superfícies com texto escuro por cima.
+
+## Paletas de exemplo (já conferidas)
+
+Quatro conjuntos prontos, úteis para ver como os papéis se combinam. Não são as únicas opções: use uma delas só quando for de fato a melhor para o assunto, e não repita a do projeto anterior. Coral é a do MegaLab.
 
 Crítico (igual em todas): claro `#c53030`, escuro `#f87171`. Para estado ruim (com ícone e rótulo) e para o chip de variação "piorou".
 Positivo (igual em todas): claro `#15803d`, escuro `#4ade80`. Só para o chip de variação "melhorou" e status bom; **nunca** como cor de marca.
@@ -63,7 +81,7 @@ Esporte, jogos, varejo, energia. A mais quente (é a família do MegaLab).
 | Escala 1→4 | `#fb923c` `#ea580c` `#c2410c` `#7c2d12` | `#9a3412` `#ea580c` `#fb923c` `#fed7aa` |
 | Categórica 1, 2, 3 | `#e2602a` `#2a78d6` `#1baf7a` | `#d95926` `#3987e5` `#199e70` |
 
-## Blocos CSS completos (copie inteiro)
+## Blocos CSS completos dos exemplos
 
 Cada bloco já traz tudo que os componentes da skill usam (cinzas, gráfico, mapa, positivo/negativo para os chips de variação).
 O escuro é grafite quase neutro (o usuário preferiu ao preto azulado). **Como encaixar:** comece pelo `assets/tokens.css` inteiro e troque só os valores destas variáveis nas três formas que ele já tem (`:root`, `@media (prefers-color-scheme: dark) { :root:not(.light) }` e `:root.dark`). O resto do `tokens.css` (`color-scheme`, `--font-brand`, `--info` = destaque, `--focus` = texto secundário, `--scrim`, `@theme`, base) fica como está.

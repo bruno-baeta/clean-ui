@@ -20,12 +20,23 @@ const RULES = [
   ['borda/anel colorido em cartão', /\b(border|ring)-(primary|orange|amber|green|emerald|lime|purple|violet|fuchsia|blue|sky|teal|yellow)(-\d{2,3})?(\/\d+)?\b/],
   ['conteúdo estreito centralizado', /max-w-(2xl|3xl|4xl|5xl|6xl|7xl|screen-(md|lg|xl))\b[^"'`]*\bmx-auto|mx-auto[^"'`]*\bmax-w-(2xl|3xl|4xl|5xl|6xl|7xl)\b/],
   ['fonte "de IA"', /\b(Inter|Roboto|Geist(?!_Mono)|Poppins|Montserrat|Space[_ ]Grotesk|Open[_ ]Sans|Lato)\b/],
-  ['verde na interface', /\b(text|bg|fill|stroke)-(green|emerald|lime)-\d{2,3}\b/],
-  ['roxo/marrom na interface', /\b(text|bg)-(purple|violet|fuchsia|amber-[89]00|stone-[6-9]00)\b/],
+  ['cor solta do Tailwind (use token da paleta do projeto)', /\b(text|bg|fill|stroke|from|to|via)-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-\d{2,3}\b/],
   ['scroll interno em texto', /\b(overflow-y-(auto|scroll))\b[^"'`]*\bmax-h-/],
   ['cor fixa que quebra um dos temas (use token)', /\b(bg|text|fill|stroke|border|ring|from|to|via)-(black|white)(\/\d+)?\b/],
   ['visual dimensionado só pela largura (limite a altura pela tela)', /\bw-full\s+h-auto\b|\bh-auto\s+w-full\b/],
+  // Calibragem de 2026-11-13 (references/medidas.md)
+  ['cartão com borda (aprovado: degrau de cor sem borda, ou sombra suave)', /\bbg-card\b[^"'`]*(?<![-\w])border(?![-\w])|(?<![-\w])border(?![-\w])[^"'`]*\bbg-card\b/],
+  ['cartão com raio menor que 16 px (use rounded-2xl ou mais)', /\bbg-card\b[^"'`]*(?<![-:\w])rounded(-sm|-md|-lg)?(?![-\w\[])|(?<![-:\w])rounded(-sm|-md|-lg)?(?![-\w\[])[^"'`]*\bbg-card\b/],
+  ['lista zebrada (use divisória fina)', /\b(odd|even):bg-/],
+  ['campo com contorno (aprovado: preenchido, sem borda)', /<(input|select|textarea)\b[^>]*(?<![-\w])border(?![-\w])/],
 ];
+
+// Espaçamento arbitrário fora da escala de 4 px (2 e 6 px passam: miolo de chip e botão).
+const SPACING = /(?<![\w-])-?(?:p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|gap|gap-x|gap-y|space-x|space-y)-\[(\d+(?:\.\d+)?)px\]/g;
+function offScale(line) {
+  for (const m of line.matchAll(SPACING)) { const v = +m[1]; if (v > 4 && v % 4 !== 0 && v !== 6 && v !== 18) return m[0]; }
+  return null;
+}
 
 // Texto visível em JSX/HTML começando com minúscula: >texto<
 const LOWER_TEXT = /(?<![=\-])>\s*([a-záéíóúâêôãõç][^<>{}\n]{2,})</;
@@ -49,6 +60,8 @@ for (const f of files) {
     const code = line.trim();
     if (code.startsWith('//') || code.startsWith('*') || code.startsWith('/*')) return;
     const hits = RULES.filter(([, re]) => re.test(line)).map(([name]) => name);
+    const off = offScale(line);
+    if (off) hits.push(`espaçamento fora da escala de 4 px (${off})`);
     if (/\.(tsx|jsx|html|vue|svelte|astro)$/.test(f)) {
       if (/—/.test(line)) hits.push('travessão no texto');
       if (/ · |&middot;/.test(line)) hits.push('separador " · "');

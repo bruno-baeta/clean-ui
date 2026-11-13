@@ -1,10 +1,13 @@
 /**
- * Kit de dashboard copiado das referências do usuário (references/exemplos-dashboards; medidas em
+ * Kit de dashboard com o acabamento das referências do usuário (references/exemplos-dashboards; medidas em
  * references/anatomia-dashboard.md). Cada peça diz de qual foto vem. Tailwind v4 + lucide-react + tokens.css.
  *
  * Regras que o kit já cumpre: cartão de 20 px sem contorno e padding de 24 px; título do cartão em cinza, peso médio;
  * número grande em peso médio; chip de variação de canto pequeno (6 px), verde ou vermelho suave e sempre com seta;
  * linhas tracejadas como separador; ícone em círculo tingido no canto direito; nada de cartão colorido de destaque.
+ *
+ * O comportamento (animação, páginas pela altura, filtro ligado, balão) é o valor do kit. O visual (raio, padding, tamanhos,
+ * tracejado, círculo) é o de partida: ajuste para a direção visual do projeto, igual em todas as peças.
  */
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight, Minus } from 'lucide-react';
@@ -24,7 +27,7 @@ export function DashCard({ title, sub, info, action, icon, aside, children, clas
   children: ReactNode; className?: string; bodyClassName?: string;
 }) {
   return (
-    <section aria-label={title} className={cn('flex min-h-0 min-w-0 flex-col rounded-[20px] bg-card p-5 sm:p-6', className)}>
+    <section aria-label={title} className={cn('flex min-h-0 min-w-0 flex-col rounded-[20px] bg-card p-4', className)}>
       <div className="flex shrink-0 flex-wrap items-start justify-between gap-x-8 gap-y-4">
         <div className="min-w-0 flex-1">
           <header className="flex flex-wrap items-center gap-x-2 gap-y-2">
@@ -37,7 +40,7 @@ export function DashCard({ title, sub, info, action, icon, aside, children, clas
         {aside && <div className="flex flex-wrap gap-x-8 gap-y-3">{aside}</div>}
       </div>
       {/* lg:flex-1: no celular o corpo respeita a altura que você der (ex.: h-64 para gráfico); flex-1 sem lg: zera gráfico absoluto. */}
-      <div className={cn('mt-4 min-h-0 lg:flex-1', bodyClassName)}>{children}</div>
+      <div className={cn('mt-3 min-h-0 lg:flex-1', bodyClassName)}>{children}</div>
     </section>
   );
 }
@@ -61,14 +64,14 @@ export function Kpi({ label, value, icon, iconTone, delta, caption, info, classN
   info?: ReactNode; className?: string;
 }) {
   return (
-    <section aria-label={label} className={cn('flex min-w-0 flex-col rounded-[20px] bg-card p-5 sm:p-6', className)}>
+    <section aria-label={label} className={cn('flex min-w-0 flex-col rounded-[20px] bg-card p-4', className)}>
       <div className="flex items-center gap-2">
         <span className="min-w-0 text-[15px] font-medium text-muted-foreground">{label}</span>
         {info && <span className="-my-2 -ml-1 [&_button]:size-7"><InfoTip label={`Sobre ${label}`}>{info}</InfoTip></span>}
         {icon && <IconCircle tone={iconTone} className="-my-1.5 ml-auto">{icon}</IconCircle>}
       </div>
-      <div className="mt-4 text-[30px] leading-none font-medium tracking-tight tabular">{value}</div>
-      <div className="mt-3 flex min-h-6 flex-wrap items-center gap-x-2 gap-y-1">
+      <div className="mt-1 text-4xl leading-[1.1] font-semibold tracking-tight tabular">{value}</div>
+      <div className="mt-2 flex min-h-6 flex-wrap items-center gap-x-2 gap-y-1">
         {delta && <DeltaChip value={delta.value} invert={delta.invert} />}
         {caption && <span className="text-[13px] text-muted-foreground">{caption}</span>}
       </div>

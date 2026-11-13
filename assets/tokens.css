@@ -7,14 +7,15 @@
  * Para não piscar o tema errado, coloque no <head>, antes do CSS:
  *   <script>try{var t=localStorage.getItem('tema'),d=t?t==='escuro':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.add(d?'dark':'light')}catch(e){}</script>
  *
- * PALETA: não existe paleta padrão. As cores abaixo são a paleta Cobalto só como ponto de partida.
- * Escolha uma paleta validada em references/paletas.md (Cobalto, Índigo, Ciano, Coral) pela marca ou pelo assunto
- * (uma só, sem montar versões para escolher) e troque o bloco de cores dos dois temas. Regras: base neutra, um destaque,
+ * PALETA: é do projeto. As cores abaixo (exemplo Cobalto) só existem para tudo funcionar de cara.
+ * Monte a do projeto pelos papéis de references/paletas.md (ponto de partida: scripts/paleta.mjs gerar --destaque=#hex),
+ * troque o bloco de cores dos dois temas e confira com scripts/paleta.mjs check. Regras: base neutra, um destaque,
  * --seq-* para dado ordenado (uma cor), --cat-* para séries sem ordem, --critical só para status.
  *
- * Fonte: carregue Plus Jakarta Sans (next/font/google ou Google Fonts) e aponte --font-brand para ela.
- *   Next:   const font = Plus_Jakarta_Sans({ variable: '--font-brand', subsets: ['latin'] });
- *   HTML:   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+ * FONTE: também é do projeto (SKILL.md seção 3; nunca Inter, Roboto, Geist, Poppins...). Carregue e aponte --font-brand.
+ * Exemplo com Figtree (troque pela escolhida):
+ *   Next:   const font = Figtree({ variable: '--font-brand', subsets: ['latin'] });
+ *   HTML:   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
  *
  * Em componentes, gráficos e SVG use sempre os tokens (bg-card, var(--chart-axis)...),
  * nunca #000, #fff, bg-black, text-white ou hex solto: isso quebra um dos temas.
@@ -29,10 +30,10 @@
    (moldura fit:h-dvh, grade fit:grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)], cartões fit:h-auto!). */
 @custom-variant fit (@media (min-width: 120rem) and (min-height: 50rem));
 
-/* Claro (paleta Cobalto, ponto de partida; troque pela escolhida em references/paletas.md) */
+/* Claro (exemplo Cobalto; troque pela paleta do projeto) */
 :root {
   color-scheme: light;
-  --font-brand: "Plus Jakarta Sans";
+  --font-brand: "Figtree";
   --background: #f5f6f8;
   --foreground: #0d1117;
   --card: #ffffff;
@@ -41,7 +42,7 @@
   --muted-foreground: #57606a;
   --border: #e2e5ea;
   --accent: #e9ecf0;
-  --primary: #256abf;            /* destaque: troque pela paleta escolhida (references/paletas.md) */
+  --primary: #256abf;            /* destaque: o do projeto */
   --primary-foreground: #ffffff;
   --critical: #c53030;           /* só estado ruim, com ícone e rótulo */
   --critical-foreground: #ffffff;

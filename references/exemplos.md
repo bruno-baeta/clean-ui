@@ -6,7 +6,7 @@ Cada caso abaixo aconteceu de verdade e foi reclamado. Use como referência quan
 
 | Errado | Certo |
 |---|---|
-| Fonte Inter/Geist/Roboto, padrão de template | Plus Jakarta Sans (ou outra da lista boa), uma família só |
+| Fonte Inter/Geist/Roboto, padrão de template | Uma família escolhida pela personalidade do projeto (ou duas: títulos e corpo), fora da lista proibida |
 | Cartões com bordinha colorida (laranja, verde, roxo) para destacar | Destaque com fundo suave da cor (`bg-primary/10`) e borda neutra |
 | Colunas de um grid com larguras e alturas diferentes | Grid com colunas iguais e cartões `h-full` |
 | Conteúdo numa coluna de 900 px no meio de um monitor largo | Largura total, grid de 2 a 4 colunas no web |
@@ -104,7 +104,7 @@ Cada caso abaixo aconteceu de verdade e foi reclamado. Use como referência quan
 | Magnitude em arco-íris: cinza, azul, amarelo, vermelho (Sismos) | Escala de uma cor só (`--seq-1..4`), mais forte = mais intensa |
 | Número da lista pintado com a cor da faixa ("5,1" amarelo, "6,4" vermelho) (Sismos) | Número na cor do texto, selo neutro com barrinha da cor da escala |
 | Barras grossas e saturadas ocupando o cartão todo | Barras finas, grade fina, cor forte só no que importa |
-| Cores avulsas de lugares diferentes (azul + amarelo + vermelho que não conversam) | Uma paleta inteira de `paletas.md` |
+| Cores avulsas de lugares diferentes (azul + amarelo + vermelho que não conversam) | Uma paleta montada pelos papéis de `paletas.md` e conferida com `paleta.mjs check` |
 | Borda branca grossa ao clicar no gráfico | `outline: none` em `.recharts-wrapper` e filhos |
 | Legenda que fica preta e ilegível depois de clicada | Cor da legenda e do tooltip forçada para as cores do tema |
 | Primeiro rótulo do eixo X colado na linha do eixo | `tickMargin`, `padding` no eixo e margem do gráfico |
@@ -120,7 +120,8 @@ Cada caso abaixo aconteceu de verdade e foi reclamado. Use como referência quan
 | Remover uma seção para "limpar" a tela | Só remover com pedido explícito |
 | Escolher sozinho a posição de um chip depois de errar duas vezes | Mostrar 2 ou 3 variações daquele detalhe (nunca da tela inteira) e deixar escolher |
 | Enviar print sem olhar | Abrir cada print (mobile e web) e passar a checklist antes |
-| Dashboard "80% bem legal" mas com título em negrito e ícone em quadradinho, chip em pílula redonda, medidor gigante (Leitura na Wikipédia) | Copiar as fotos de perto: título cinza médio, ícone em círculo no canto, chip de 6 px verde/vermelho com seta, medidor até 224 px (anatomia-dashboard.md) |
+| Dashboard "80% bem legal" mas com título em negrito e ícone em quadradinho, chip em pílula redonda, medidor gigante (Leitura na Wikipédia) | Acabamento no nível das fotos: título discreto, chip suave com seta, medidor contido (anatomia-dashboard.md) |
+| Todo projeto saindo igual: faixa de 4 indicadores, grade de cartões, mesma fonte, mesmo azul | Direção visual própria por projeto (`direcao-visual.md`): cor, tipo, forma e assinatura tirados do assunto |
 | Gráfico principal com celular x computador e um cartão "Pelo celular" com a mesma divisão (Leitura na Wikipédia) | Cada informação uma vez: gráfico compara período atual x anterior; a divisão fica só no cartão dela |
 | Cartão do medidor do tamanho de meia tela, com o desenho pequeno no meio (Leitura na Wikipédia) | Cartão estreito (3/12) e arranjo pela largura do cartão (`@container`) |
 | Linhas da tabela quebrando o nome em 2 ou 3 linhas (coluna de "situação" sobrando) (Leitura na Wikipédia) | 3 colunas: posição, nome, valor com seta; "Novo" em chip no lugar da seta |

@@ -5,7 +5,15 @@ description: Clean UI, regras de design de interface (dados primeiro, cabe na te
 
 # Clean UI
 
-Interface minimalista, moderna, com tema claro e escuro, que cabe na tela, com dados em primeiro lugar e cara de produto feito por gente, não por IA. As regras abaixo vieram de pedidos reais de ajuste. Cada uma já irritou o usuário quando foi quebrada: trate como requisito, não como sugestão.
+Interface com dados em primeiro lugar, que cabe na tela, funciona nos temas claro e escuro e tem cara de produto feito por gente, não por IA.
+
+**A skill não define a cara do produto.** Ela tem três camadas:
+
+1. **Proibido.** Coisas que já irritaram o usuário de verdade. Nunca acontecem, em nenhum estilo.
+2. **Acabamento obrigatório.** Cabe na tela, simetria, dois temas, contraste, estados. Os scripts medem.
+3. **Escolhas suas.** Paleta, fonte, raio, densidade, superfície, composição, assinatura e detalhes. Você decide pelo assunto e pelo plano de informação, guiado por `references/fundamentos.md` e `references/direcao-visual.md`.
+
+Duas telas de projetos diferentes feitas com esta skill **não devem parecer a mesma tela com outro logo**. Seguir as regras é o mínimo; o design é a parte 3.
 
 ## Arquivos da skill
 
@@ -13,212 +21,225 @@ Caminhos relativos à pasta desta skill.
 
 | Arquivo | Quando usar |
 |---|---|
-| `references/informacao.md` | **Toda tela nova ou redesign, antes do layout.** Como escolher o que mostrar, a ordem de prioridade e a posição de cada informação (inventário, perguntas do usuário, níveis, filtro, mapa de posições, plano escrito). |
-| `references/padroes-aprovados.md` | Blocos que o usuário aprovou ("ficou bem melhor"): cartão de decisão, gráfico da medida da decisão com a linha do limite, cartão de situação com saldo ao longo do tempo, lista do próprio usuário, apoio sazonal, cabeçalho do celular, ordem por prioridade, ultrawide. Use como ponto de partida para o conteúdo, não como esqueleto fixo. |
-| `references/armadilhas.md` | Erros técnicos que já custaram retrabalho (Tailwind v4, `cn` sem merge, especificidade de `[&>*]:`, next-themes, servidor com CSS velho, testar estados que o banco local não tem). Leia antes de escrever o código. |
-| `references/migracao.md` | **Redesenhar o app inteiro** (várias telas): tela de referência aprovada primeiro, base feita por você (moldura, peças de página, tokens no body, tema salvo), frentes paralelas com brief comum, integração (pedidos para o kit, apagar código antigo só no fim, reiniciar, verificar tudo). |
-| `references/exemplos.md` | Casos reais de errado e certo. Leia ao criar uma tela nova ou quando estiver em dúvida se algo está bom. |
-| `references/dashboards.md` | **Toda tela com números, gráficos ou mapas.** O que separa amador de profissional, princípios (NN/g, Stephen Few, IBM Carbon), 7 composições (escolha a que serve ao plano de informação), regras para telas largas e ultrawide, cor e acabamento dos gráficos. |
-| `references/paletas.md` | Paletas prontas e validadas (Cobalto, Índigo, Ciano, Coral) com cinzas, destaque, escala ordenada e cores de séries para os dois temas. Escolha por aqui, nunca cores soltas. |
-| `assets/tokens.css` | Projeto novo ou sem identidade: tema claro e escuro (segue o sistema, com troca manual), fonte, foco, gráficos e toque já configurados (Tailwind v4). Vem com a paleta Cobalto só como ponto de partida: troque pelo bloco completo da escolhida (fim de `paletas.md`). Inclui a variante `tall`, positivo/negativo/aviso e a mãozinha. |
-| `references/exemplos-dashboards/` | As 7 referências do usuário de dashboard moderno. **Abra todas antes de desenhar qualquer dashboard.** |
-| `references/anatomia-dashboard.md` | As referências traduzidas em medidas: cartão, título, indicador, chips, números no topo do gráfico, gráficos, partes de um todo, medidor, tabela, celular, e o que não copiar. |
-| `assets/dashboard.tsx` | **Kit de dashboard** medido nas referências: DashCard, Kpi, IconCircle, DeltaChip, StatusChip, TrendDot, CountBadge, Tabs, SeriesStat, StatColumns, Dashed, KeyValue, StackedBar, LegendGrid, Gauge, classes TH/TR de tabela, TooltipCard, PillMark, props `chart` para Recharts, ListaAlta (a lista num cartão vertical, com páginas pela altura), Divergentes (o que somou e o que tirou), Quadro100 (de cada 100), Colunas (colunas flutuantes; cascata e funil foram reprovados como difíceis), useFitRows (quantas linhas cabem) e useFitHeight (altura de um gráfico pelo que sobra da janela; mede de novo quando o cartão de cima cresce). |
-| `assets/painel.tsx` | Ajudantes de mapa: useMapColumns (largura da coluna do mapa) e FillMap (mapa-múndi que preenche). |
-| `assets/ui.tsx` | Componentes base prontos (Card, Section, IconBox, Chip, Pill, Button, BottomActions, ListRow, ListCard, StatCard, DateBlock, FillEmpty, InfoTip, NavLoading, Spinner, ThemeToggle, FitScreen). Reaproveite ou adapte em vez de inventar. Se o projeto já tem equivalentes, use os do projeto. |
-| `scripts/lint-ui.mjs` | `node <skill>/scripts/lint-ui.mjs src`: varre o código alterado (hover que move, reticências, bordas coloridas, largura estreita, fontes proibidas, cor fixa que quebra um dos temas, "—", " · ", minúscula, "Rótulo: valor"). |
-| `scripts/check-ui.mjs` | `node <skill>/scripts/check-ui.mjs http://localhost:3000/rota --out=prints`: tira prints em 320 e 390 px (mobile) e na área útil do navegador em 1366×650, 1536×730 e 1920×950 (notebooks e monitor) e 2560×960, 2752×1100 (21:9 com zoom de 125% do Windows) e 3440×1300 (ultrawide 21:9), nos temas escuro **e** claro, e mede estouro horizontal e vertical (cartão passando da borda de baixo da primeira tela ou mais alto que a tela), listas parecidas repetidas, gráfico esticado e linha de lista larga demais, "…", cartões vizinhos com alturas diferentes (também dentro de invólucro sem fundo), cartão com vão vazio por dentro ou conteúdo espalhado, grid incompleto, ícone sem container, hover que move, scroll interno, conteúdo estreito, fonte, clicável sem mãozinha, bordas de cartões quase alinhadas entre linhas, balão do "i" fora da tela (abre cada um), barra de rolagem no celular, linha de tabela larga demais (qualquer linha repetida), texto espremido, linha de lista com título ou descrição quebrando no celular e página vazia ou de erro (espera o carregamento; se os dados não vieram, o check não vale). Cada achado vem com tamanho e tema. Precisa de Playwright no projeto; `--user`/`--pass` para páginas com senha. |
+| `references/informacao.md` | **Toda tela nova ou redesign, antes do layout.** O que mostrar, em que ordem e onde (inventário, perguntas do usuário, níveis, filtro, mapa de posições, plano escrito). |
+| `references/direcao-visual.md` | **Todo projeto novo e todo redesign.** Como escolher a cara do projeto: direção em 5 linhas, eixos para variar, repertório de composições, pontos de partida por assunto, sinais de template de IA e o teste da mesmice. |
+| `references/fundamentos.md` | **Sempre.** Regras de design que valem em qualquer estilo: hierarquia, espaço, grade, tipografia, cor, forma, consistência, estados, formulários, movimento, acessibilidade e acabamento. |
+| `references/medidas.md` | **Sempre, antes de escrever qualquer `gap`, `padding`, tamanho de texto, raio, botão ou campo.** Medidas que o usuário escolheu olhando (padding 16, 12 entre cartões, texto 15, número 36/600, botão pílula de 40), o que ele reprovou (cartão com borda, raio pequeno, zebra, campo com contorno), o sistema de espaçamento por papel e o sistema de alinhamento. |
+| `references/armadilhas.md` | Erros técnicos que já custaram retrabalho (Tailwind v4, `cn` sem merge, next-themes, servidor com CSS velho, lista que quebra no celular, cartão que estica). Leia antes de escrever o código. |
+| `references/exemplos.md` | Casos reais de errado e certo. Em dúvida se algo está bom, procure aqui. |
+| `references/padroes-aprovados.md` | Blocos que o usuário aprovou (cartão de decisão, gráfico da medida com a linha do limite, situação do usuário, lista do próprio usuário). Repertório de **conteúdo**, não de visual. |
+| `references/dashboards.md` | **Telas com números, gráficos ou mapas.** Amador x profissional, princípios, composições, telas largas e ultrawide, cor e acabamento dos gráficos. |
+| `references/anatomia-dashboard.md` | Medidas de acabamento tiradas das 7 referências (`exemplos-dashboards/`): bons valores de partida para chips, tabela, indicador e gráfico. Valores de partida, não molde. |
+| `references/paletas.md` | Como montar a paleta (papéis, regras, validação) e 4 paletas de exemplo já conferidas. |
+| `references/migracao.md` | Redesenhar o app inteiro (várias telas): tela de referência aprovada primeiro, base comum, frentes paralelas, integração. |
+| `assets/tokens.css` | Base técnica dos dois temas (Tailwind v4): tokens, troca de tema sem piscar, foco, mãozinha, variantes `tall`/`fit`, breakpoints `3xl`/`4xl`, animações. As cores e a fonte que vêm nele são só para funcionar de cara: troque pelas do projeto. |
+| `assets/ui.tsx`, `assets/dashboard.tsx`, `assets/painel.tsx` | Componentes prontos (InfoTip com portal, ThemeToggle, NavLoading, ListaAlta com páginas pela altura, DeltaChip, useFitRows, useFitHeight, FillMap...). Use pelo comportamento já resolvido. **O visual deles é ajustável:** raio, padding, tamanhos e cores seguem a direção do projeto. |
+| `scripts/paleta.mjs` | `node <skill>/scripts/paleta.mjs check src/app/globals.css` confere a paleta nos dois temas (texto, destaque, chips, séries, escala, daltonismo). `gerar --destaque=#hex` monta um ponto de partida a partir de uma cor. |
+| `scripts/lint-ui.mjs` | `node <skill>/scripts/lint-ui.mjs src`: hover que move, reticências, bordas coloridas, conteúdo estreito, fontes proibidas, cor fixa ou solta, "—", " · ", minúscula, "Rótulo: valor", espaçamento fora da escala, cartão com borda ou raio pequeno, lista zebrada, campo com contorno. |
+| `scripts/check-ui.mjs` | `node <skill>/scripts/check-ui.mjs http://localhost:3000/rota --out=prints`: prints em 320, 390, 1366×650, 1536×730, 1920×950, 2560×960, 2752×1100 e 3440×1300, nos dois temas, e mede estouro, cartão passando da borda de baixo, alturas diferentes lado a lado, vão dentro de cartão, grid incompleto, linha de lista larga demais ou quebrando, gráfico esticado, "…", ícone sem container, hover que move, scroll interno, fonte, mãozinha, bordas quase alinhadas, espaços diferentes entre cartões, recuo diferente em cartões vizinhos, texto quase alinhado, balão do "i" fora da tela e página vazia ou de erro. Precisa de Playwright no projeto; `--user`/`--pass` para páginas com senha. |
 
 Os scripts são guias: confira cada achado e, principalmente, abra os prints e olhe.
 
-## 1. Processo (o que mais causa retrabalho)
+## 1. Processo
 
 1. **Faça só o que foi pedido.** Nunca remova, troque ou "simplifique" elementos existentes sem pedido explícito. Se a proposta exige tirar algo, pergunte antes. Na dúvida, mantenha.
-2. **Respeite o breakpoint pedido.** Pediu ajuste no mobile: o web não muda (use `sm:`/`md:` para preservar o web, e vice-versa).
-3. **Mostre antes de publicar, olhando todos os tamanhos.** Antes de dizer que está bom, abra o print de **cada** tamanho do check (inclusive 1366, 1536 e 2752, onde tabela quebra e cartão sobra), não só 390 e 1920. Trabalho de agente delegado também: confira você mesmo. Rode localmente, tire print no **mobile (390 px, e confira 320 px)** e no **web (1366×650, 1536×730 e 1920×950, a área útil real do navegador)**, nos **dois temas**, olhe de verdade cada print e só faça commit/push/deploy com aprovação explícita.
-4. **Tela nova ou redesign: primeiro as informações, depois o layout.** Siga `references/informacao.md` (e veja os blocos de `references/padroes-aprovados.md` e os erros de `references/armadilhas.md`): inventário do que o produto sabe (inclusive tudo que a tela antiga mostrava), perguntas do usuário em ordem de urgência, níveis de prioridade, filtro de cada informação, mapa de posições e o plano escrito. A composição sai desse plano. Escolha você a composição e a paleta (a da marca, se o projeto tiver; senão a de `paletas.md` que combina com o assunto). **Não monte várias versões ou visões da tela para o usuário escolher.** Construa uma, a melhor, e diga em poucas linhas por que cada coisa está onde está. Nunca parta do esqueleto de um projeto anterior nem repita "4 indicadores + grade de cartões + listas" por padrão.
-5. **Detalhe reprovado duas vezes = opções lado a lado.** Só quando o usuário já reprovou o mesmo detalhe (posição de um chip, fonte) duas vezes, mostre 2 ou 3 variações desse detalhe em print. Nunca para a tela inteira.
-6. **Depois de apagar ou recriar arquivos, reinicie o servidor de desenvolvimento** (ou salve o CSS de novo) antes do check: o Tailwind pode continuar servindo o CSS antigo, sem as classes novas.
-7. **Revise com a checklist (seção 10) antes de cada print.** Se não houver simetria, não está pronto.
+2. **Respeite o breakpoint pedido.** Pediu ajuste no celular: o web não muda (e vice-versa).
+3. **Tela nova ou redesign:**
+   1. **Informação** (`informacao.md`): inventário, perguntas do usuário, níveis, mapa de posições.
+   2. **Direção visual** (`direcao-visual.md`): personalidade, cor, tipo, forma, assinatura, em 5 linhas. Projeto que já tem identidade aprovada segue a dele; você só decide o que falta.
+   3. **Composição** escolhida pela pergunta da tela, não pelo hábito.
+   4. **Construa uma versão só**, a melhor. Não monte várias versões ou paletas para o usuário escolher. Na entrega, diga em poucas linhas a direção e por que cada coisa está onde está.
+4. **Detalhe reprovado duas vezes = opções lado a lado.** Só quando o usuário já reprovou o mesmo detalhe duas vezes, mostre 2 ou 3 variações daquele detalhe em print. Nunca da tela inteira.
+5. **Mostre antes de publicar, olhando todos os tamanhos.** Abra o print de **cada** tamanho do check (inclusive 1366, 1536 e 2752, onde tabela quebra e cartão sobra), nos **dois temas**. Trabalho de agente delegado também: confira você mesmo. Commit, push e deploy só com aprovação explícita.
+6. **Depois de apagar ou recriar arquivos, reinicie o servidor de desenvolvimento** antes do check: o Tailwind pode continuar servindo o CSS antigo.
+7. **Revise com a checklist (seção 11) antes de cada print.**
 
-## 2. Tipografia
+## 2. Escolhas suas (com critério)
+
+Você decide, e justifica na entrega em uma linha cada:
+
+- **Paleta:** a da marca, se houver; senão, uma cor tirada do assunto e da personalidade, montada nos papéis da seção 4 e conferida com `paleta.mjs check`. Evite repetir a cor do projeto anterior.
+- **Fonte:** grotesca neutra ou humanista de qualidade, fora da lista proibida (seção 3). Pode ter uma segunda família nos títulos.
+- **Forma:** um raio para o app entre 16 e 24 px, superfície (cartões em degrau de cor sem borda, com ou sem sombra suave; superfície única com divisórias; blocos tingidos). **Nunca cartão com borda.** Densidade: o padrão é o de `medidas.md` (cartão justo, padding 16, 12 entre cartões); mude só com motivo, no app inteiro.
+- **Composição:** do repertório de `direcao-visual.md` ou outra, pela pergunta da tela. **A faixa de 4 indicadores + grade de cartões não é padrão**: só quando a pessoa acompanha aqueles números todo dia.
+- **Assinatura:** um elemento que só este projeto tem e que também mostra dado.
+- **Detalhes:** formato dos chips, estilo das marcas de gráfico, ícone em círculo ou quadrado, peso dos títulos, tratamento do cabeçalho. Coerentes entre si e com a direção.
+
+O que não muda com o estilo: as proibições (seção 3 em diante), os fundamentos (`fundamentos.md`) e o que foi aprovado e reprovado em `medidas.md`.
+
+## 3. Tipografia
 
 - **Proibidas (cara de IA):** Inter, Roboto, Arial, Helvetica, system-ui como fonte de marca, Geist, Poppins, Montserrat, Space Grotesk, Open Sans, Lato.
-- **Boas e pouco usadas por IA:** Plus Jakarta Sans (preferida e já aprovada), Manrope, Onest, Figtree, Hanken Grotesk, Schibsted Grotesk, Instrument Sans, Albert Sans, Familjen Grotesk. Para títulos de destaque, Bricolage Grotesque. Uma família só por app.
-- Números com `font-variant-numeric: tabular-nums` (`tabular-nums`). Nada de fonte mono com zero cortado ou pontilhado.
-- Hierarquia por peso e tamanho moderados. Rótulo pequeno em cima (12 px, cor apagada) e valor embaixo (16 px, semibold). Valores lado a lado com o mesmo tamanho de fonte. Nada de texto gigante colorido.
-- **Todo texto visível começa com maiúscula**, inclusive abreviações soltas ("Qui", "Sex"). No meio de uma frase, escreva normal: "Vs terça anterior", não "Vs Ter anterior". Títulos em sentence case, nunca CAIXA ALTA.
+- **Aprovadas na calibragem (2026-11-13):** grotescas neutras (Hanken Grotesk, Schibsted Grotesk, Instrument Sans, Familjen Grotesk, Albert Sans) e humanistas (Figtree, Source Sans 3, Nunito Sans). Varie dentro dessas duas famílias de um projeto para o outro.
+- **Não aprovadas:** geométrica no corpo (Manrope, Onest, Outfit) e fonte de exibição só nos números (Bricolage nos números com outra no texto). Serifa em título editorial (Fraunces, Newsreader, Instrument Serif) não foi testada: só em projeto de leitura, e avise na entrega. Plus Jakarta Sans é do MegaLab, que mantém a identidade dele.
+- **Tamanhos padrão:** texto base 15 px, secundário 14, chip e eixo 12, número de destaque 36 px peso 600 (`medidas.md`).
+- No máximo duas famílias. Escala modular, alturas de linha e pesos em `fundamentos.md` seção 4.
+- Números com `tabular-nums`. Nada de fonte mono com zero cortado ou pontilhado.
+- Rótulo menor e apagado, valor maior. Valores lado a lado com o mesmo tamanho. Nada de texto gigante colorido.
+- **Todo texto visível começa com maiúscula**, inclusive abreviações soltas ("Qui", "Sex"). No meio de uma frase, escreva normal ("Vs terça anterior"). Títulos em sentence case, nunca CAIXA ALTA.
 
-## 3. Cor e tema
+## 4. Cor e tema
 
-- **Sempre dois temas, claro e escuro.** Todo app nasce com os dois: segue o tema do sistema (`prefers-color-scheme`) e tem um botão para trocar (`ThemeToggle` em `assets/ui.tsx`), com a escolha salva. E-mails e prévias também respondem a `prefers-color-scheme`. Nenhuma tela pode existir só num tema.
-- **Cores sempre por token** (`var(--card)`, `bg-card`, `text-muted-foreground`). Nada de `#000`, `#fff`, `bg-black`, `text-white` ou hex solto em componente, gráfico ou SVG: isso quebra o outro tema.
-- **Escuro:** fundo bem escuro (perto de preto), cartão um degrau acima, borda discreta, texto quase branco. **Claro:** fundo cinza muito claro, cartão branco, borda leve, texto quase preto. Os dois com o mesmo cuidado e conferidos em print.
-- **Paleta não é fixa, mas também não é solta.** Não existe "preto + laranja" padrão: use uma paleta inteira de `references/paletas.md` (cinzas, destaque, escala e séries que combinam e já foram validadas para contraste e daltonismo), escolhida pelo assunto e mostrada renderizada. Nada de juntar cores avulsas (o azul de um lugar, o amarelo de outro, o vermelho de outro). Projeto com marca segue a sua (ex.: o MegaLab escolheu laranja); cor nova só com contraste de pelo menos 3:1 contra o cartão nos dois temas e distinguível para daltônicos (se o agente tiver o guia `dataviz`, use o validador dele).
-- **Base neutra, cor com propósito.** Cinzas fazem ~90% da tela. Uma cor de destaque por app (versão por tema). Dado ordenado (magnitude, nível, faixa) usa a escala de **uma cor só** (`--seq-1..4`), nunca arco-íris de cinza, azul, amarelo e vermelho. Séries sem ordem usam `--cat-1..3` em ordem fixa. Vermelho/amarelo de alerta só para status de verdade, com ícone e rótulo. **Verde nunca é cor de marca**, mas pode aparecer em dado: chip de variação "melhorou", status bom e a série categórica 3 das paletas validadas. Sem roxo aleatório, sem marrom.
-- **Número nunca pintado.** Valores e rótulos ficam na cor do texto; a cor do dado vai numa marca pequena ao lado (ponto, barra fina, selo neutro com barrinha colorida).
-- **Variação para melhor e para pior** (como nas referências do usuário): chip verde suave e chip vermelho suave, **sempre com seta** para quem não distingue as cores (`DeltaChip`). Igual: chip cinza.
-- Estados parecidos (ex.: Errei, Difícil, Bom, Fácil) precisam de cores claramente diferentes entre si.
-- **Sem bordas ou anéis coloridos** para destacar cartões. Destaque só com fundo suave da cor (`bg-primary/10`).
-- Texto sempre legível nos dois temas, inclusive legendas e tooltips de gráficos depois de clicados.
+- **Sempre dois temas, claro e escuro.** Segue o sistema (`prefers-color-scheme`) e tem botão de troca (`ThemeToggle`), com a escolha salva. E-mails e prévias também respondem ao sistema. Nenhuma tela existe só num tema.
+- **Cores sempre por token** (`bg-card`, `var(--chart-axis)`). Nada de `#000`, `#fff`, `bg-black`, `text-white`, `bg-blue-500` ou hex solto em componente, gráfico ou SVG.
+- **Você monta a paleta**, mas ela tem papéis fixos (os componentes dependem deles): fundo, cartão, cartão-2, muted, borda, accent (hover), texto, texto secundário, destaque (`--primary`) e o texto sobre ele, escala ordenada de uma cor (`--seq-1..4`), séries sem ordem (`--cat-1..3`), crítico, positivo, aviso, cores de gráfico e mapa. Ponto de partida rápido: `paleta.mjs gerar --destaque=#hex`. Depois ajuste à vontade.
+- **Toda paleta passa no `paleta.mjs check` sem falha**, nos dois temas: texto 4,5:1, destaque e marcas de gráfico 3:1, chips legíveis, escala que fica mais forte a cada degrau, séries distinguíveis para daltônicos.
+- **Base neutra, cor com propósito.** Neutros fazem ~90% da tela (tingidos de leve para dar temperatura). Uma cor de destaque. Dado ordenado usa a escala de uma cor só, nunca arco-íris. Vermelho e amarelo de alerta só para status de verdade, com ícone e rótulo.
+- **Verde e vermelho são de variação** (melhorou, piorou). Se a marca for verde ou vermelha, os chips de variação continuam claros pela seta e pelo fundo suave, e o destaque da marca não pode ser confundido com "melhorou".
+- **Número nunca pintado.** Valores e rótulos na cor do texto; a cor do dado vai numa marca pequena ao lado (ponto, barra fina).
+- **Variação para melhor e para pior:** chip suave verde ou vermelho, **sempre com seta**; igual em cinza (`DeltaChip`).
+- Estados parecidos (Errei, Difícil, Bom, Fácil) com cores claramente diferentes entre si.
+- **Sem bordas ou anéis coloridos** para destacar cartões, e **sem cartão preenchido de cor** ("péssima ideia"). Destaque só com fundo suave da cor (`bg-primary/10`).
+- Escuro: fundo quase preto com leve tom, cartão um degrau acima, destaque menos saturado e mais claro. Claro: fundo levemente acinzentado ou tingido, cartão mais claro que o fundo. Os dois conferidos em print.
 
-## 4. Layout e simetria
+## 5. Layout e simetria
 
-- **Largura total no web.** Nada de conteúdo estreito centralizado (`max-w-*` + `mx-auto` na página). Use grid para ocupar a tela.
-- **Tela larga ganha colunas, não esticar.** De 1920 px para cima e em ultrawide 21:9 (2560 e 3440 px), aumente o número de colunas com `3xl:` (1920 px) e `4xl:` (2560 px), definidos no `tokens.css`; nunca `min-[1920px]:` (no Tailwind v4 ele perde para `lg:`), abra painéis que antes ficavam escondidos (detalhe ao lado, tabela ao lado do gráfico) e limite a proporção: gráfico de tempo até ~4:1, barras e mapas até ~2,5:1, linha de lista até ~720 px. Veja `references/dashboards.md` seção 4.
-- **Mobile first.** Espaçamento lateral confortável (16 px), nada apertado, carrossel com respiro horizontal, primeiro item com espaço em cima.
-- **Cabe na altura da tela.** O conteúdo se adapta à janela nas duas direções, não só à largura. Nenhum mapa, gráfico, imagem ou cartão de tamanho fixo passa da borda de baixo da primeira tela nem é mais alto que a janela (só listas continuam abaixo, rolando a página): mapas, gráficos e imagens grandes têm a altura limitada pela janela (`max-h-[calc(100dvh-<cabeçalho>)]`, `h-[min(…,60dvh)]`, SVG com `preserveAspectRatio="xMidYMid meet"` dentro de um container de altura definida). Nunca dimensione um visual largo só pela largura (`w-full h-auto`, `aspect-[2/1]`): num monitor largo ou num notebook ele estoura para baixo. A primeira tela (cabeçalho, indicadores e o bloco principal) cabe inteira em 390×844, 1366×650, 1536×730 e 1920×950 (área útil do navegador, já descontadas as barras; a tela inteira não serve de medida). Use `FitScreen` de `assets/ui.tsx`.
-- **Tela sempre preenchida.** O último bloco estica até o fim (`flex-1`). Sem metade da tela vazia: use conteúdo real ou um estado vazio visual (ícone em container + 1 linha).
+- **Largura total no web.** Nada de conteúdo estreito centralizado (`max-w-*` + `mx-auto` na página).
+- **Tela larga ganha colunas, não estica.** De 1920 px para cima e no ultrawide 21:9, mais colunas com `3xl:` e `4xl:` (nunca `min-[1920px]:`, que perde para `lg:` no Tailwind v4), painéis que antes ficavam escondidos aparecem ao lado, e a proporção tem teto: gráfico de tempo até ~4:1, barras e mapas até ~2,5:1, linha de lista até ~720 px.
+- **Mobile first.** Margem lateral de 16 px, nada apertado, carrossel com respiro, primeiro item com espaço em cima.
+- **Cabe na altura da tela.** Nenhum mapa, gráfico, imagem ou cartão de tamanho fixo passa da borda de baixo da primeira tela nem é mais alto que a janela (só listas continuam rolando). Visual largo tem a altura limitada pela janela (`h-[min(…,60dvh)]`, `max-h-[calc(100dvh-…)]`), nunca só pela largura (`w-full h-auto`, `aspect-[2/1]`). A primeira tela cabe inteira em 390×844, 1366×650, 1536×730 e 1920×950.
+- **Tela sempre preenchida.** O último bloco estica até o fim (`flex-1`); sem metade da tela vazia. Sem dados: estado vazio visual (ícone em container + uma linha) ocupando o espaço.
+- **Espaçamento por papel, nunca no olho** (`medidas.md` seção 3): 4 px na mesma informação, 8 no mesmo grupo, 12 entre peças e entre cartões, 16 no padding do cartão, 24 entre grupos, 32 entre seções. Mesma relação, mesmo número na tela inteira; um `gap` só na grade da página; espaço vem do pai (`gap`), não de margem solta no filho.
+- **Um eixo esquerdo e um direito por cartão** (`medidas.md` seção 4): título, número, chip, gráfico e lista começam no mesmo x. Diferença de 1 a 6 px é sempre erro.
 - **Simetria é obrigatória:**
-  - cartões lado a lado com a **mesma altura** (`items-stretch`, `h-full`), e o conteúdo interno (gráfico, tabela) cresce junto e ocupa toda a altura;
+  - cartões lado a lado com a **mesma altura**, e o conteúdo (gráfico, tabela) cresce junto;
   - mesmo número de linhas de texto à esquerda e à direita;
-  - cartão esticado pela grade não fica com vão por dentro: linhas de lista com altura fixa e o bloco (título + linhas) centralizado na vertical, nunca `justify-around`/`justify-between` espalhando as linhas; colunas comparáveis (A x B) com a mesma altura de linha, para as linhas se alinharem (ver `references/armadilhas.md`, "Cartão que estica");
+  - cartão esticado pela grade não fica com vão por dentro: linhas de altura fixa e bloco centralizado na vertical, nunca linhas espalhadas com `justify-between` (ver `armadilhas.md`, "Cartão que estica");
   - linhas do grid completas (sem 3 + 1 sobrando);
   - na mesma coluna, itens e chips com a mesma largura;
-  - colunas de informação começam no mesmo x em todas as linhas de uma lista (use grid com colunas fixas, não `flex` solto);
-  - ícones do mesmo tamanho e alinhados na mesma altura do texto;
-  - itens de um cabeçalho igualmente espaçados; elementos "vs" e separadores centralizados de verdade, inclusive na vertical.
-- **Título de seção fora do cartão** em telas de app (listas, detalhes, formulários). **Exceção: dashboards** (seção 9), onde cada cartão é um bloco de dado com o título cinza dentro, em cima à esquerda, como nas referências. Fora dos dashboards, nunca título como legenda dentro do cartão. Seções lado a lado têm os títulos na mesma linha.
-- **Sem cartão dentro de cartão.** Dentro de um cartão, separe com divisórias (`divide-y`, `border-t`, `border-l`).
-- **Sem texto cortado com "…".** Deixe quebrar linha ou reorganize no mobile; em linha de lista use `min-w-0` para não estourar.
-- **Sem scroll interno**: menu lateral que cabe na tela, texto longo fora de container rolável, nada vazando da borda do container.
+  - colunas de uma lista começam no mesmo x em todas as linhas (grid com colunas fixas, não `flex` solto);
+  - ícones do mesmo tamanho, na altura do texto; separadores e "vs" centralizados de verdade.
+- **Título de seção fora do cartão** em telas de app (listas, detalhes, formulários); em dashboard, o título do bloco fica dentro, em cima à esquerda, discreto. Seções lado a lado com os títulos na mesma linha.
+- **Sem cartão dentro de cartão.** Dentro de um cartão, divisórias (linha fina sólida ou tracejada, uma das duas no app). Nada de linha de lista em bloco com fundo próprio nem lista zebrada.
+- **Cartão sem borda.** Superfície por degrau de cor, com sombra suave se a direção pedir. Raio do cartão de 16 a 24 px.
+- **Sem texto cortado com "…".** Deixe quebrar ou reorganize; `min-w-0` em linha de lista.
+- **Sem scroll interno**: menu lateral cabe na tela, nada vaza do container.
 
-## 5. Texto (menos é mais)
+## 6. Texto (menos é mais)
 
-- Dados primeiro: números, listas compactas, gráficos, status curtos. Corte toda frase que não seja dado ou rótulo.
-- Explicação só sob demanda, no ícone "i" (tooltip/popover). Nada de nota de rodapé, frase-resumo ("Você apostou R$ X com saldo de Y") ou parágrafo em cartão de visão geral.
-- **Proibido:** travessão (—) em qualquer lugar, inclusive como valor vazio (use "Sem dados", "Nenhuma"); frases "Rótulo: valor"; várias informações numa linha separadas por " · " (cada informação vira um elemento: linha, coluna ou chip com ícone).
-- Título e descrição não podem dizer a mesma coisa. Abrevie quando couber.
-- Linguagem para leigo: sem jargão técnico ou estatístico. Explique com passos visuais (ícone + poucas palavras).
-- **Uma lista por tela.** Várias listas com itens parecidos na mesma tela (ex.: "Mais fortes" e "Mais recentes", "Últimos jogos" e "Próximos jogos") cansam: mostre uma lista só e troque o recorte por um controle de ordem ou filtro (pílulas "Recentes", "Mais fortes"). Outros ângulos dos mesmos dados viram gráfico ou indicador, não outra lista. **Blocos com o mesmo desenho também contam como listas iguais**: dois cartões vizinhos de barras deitadas com nome e valor (dois rankings lado a lado) leem como a mesma lista repetida. Cada bloco vizinho ganha um desenho diferente (ver seção 9, "Um desenho por bloco").
-- Esconda o que não existe: seção sem dados, histórico vazio ou cartão que nunca vai mostrar nada não aparece.
+- Dados primeiro: números, listas, gráficos, status curtos. Corte toda frase que não seja dado ou rótulo.
+- Explicação só sob demanda, no ícone "i". Nada de nota de rodapé, frase-resumo ou parágrafo em visão geral.
+- **Proibido:** travessão (—) em qualquer lugar, inclusive como valor vazio ("Sem dados", "Nenhuma"); "Rótulo: valor"; várias informações numa linha separadas por " · " (cada uma vira um elemento).
+- Título e descrição não dizem a mesma coisa. Linguagem para leigo, sem jargão.
+- **Uma lista por tela.** Recortes diferentes dos mesmos itens viram filtro ou ordem (pílulas), outros ângulos viram gráfico. Dois blocos vizinhos com o mesmo desenho (dois rankings de barras deitadas) contam como lista repetida.
+- Esconda o que não existe: seção sem dados ou cartão que nunca vai mostrar nada não aparece.
 
-## 6. Componentes
+## 7. Componentes
 
-- **Ícone é obrigatório (sem exceção):**
-  - **Ícone da aba** em todo app e página: favicon (`icon`), `apple-icon` e `<title>` curto. Nunca a aba com o ícone padrão do framework ou do navegador.
-  - **Ícone em todo item de menu:** lateral, barra inferior, menu suspenso, abas de navegação entre áreas. Item de menu só com texto não existe.
-  - Ícone de PWA (`manifest`) quando o app pode ser instalado.
-- **Ícones de conteúdo:** todo ícone de conteúdo fica dentro de um container quadrado arredondado com fundo da cor (ex.: `size-9 rounded-xl bg-primary/14 text-primary`), também dentro de cartões. Exceção: chevron de linha clicável e ícone dentro de botão/badge que já tem fundo. Não tire ícones para ganhar espaço: encurte o texto. Use ícones de verdade (logos de empresa quando fizer sentido).
-- **Nada de texto clicável.** Toda ação é botão (pílula com fundo) ou a linha/cartão inteiro clicável. Inclui "Ver todas", breadcrumbs e nomes em tabelas.
-- **Linha de lista padrão:** `[ícone em container] [rótulo pequeno em cima / valor embaixo] [coluna direita: chip em cima, valor embaixo] [chevron]`. Chip de status vai no canto direito, em cima do valor; nunca grudado no título nem numa linha solta.
-- **Linha de lista no celular não quebra o título nem a descrição.** Quando a coluna da direita (chip, valor, versões) deixa menos de ~60% da linha para o texto, o nome e a descrição quebram em 2 ou 3 linhas e cada item fica com uma altura: grosso e torto. Abaixo de ~460 px de largura da lista, tire a coluna da direita e desça chip e valor para uma linha embaixo do texto (`[ícone] [nome / descrição / chip + valor] [chevron]`): todas as linhas ficam com a mesma altura e o texto ganha a largura toda. Mesmo com o chip embaixo, nada se perde. Vale também na tela larga: lista dividida em 2 ou 3 colunas de linhas espreme o texto do mesmo jeito; use menos colunas ou o arranjo empilhado. O `check-ui` acusa "linha de lista com texto quebrando" em qualquer largura.
-- **Datas:** em blocos (dia grande, mês/semana pequeno), não uma string longa.
-- **Animação de entrada nos gráficos (obrigatória):** quando a tela abre, as barras sobem do zero e as linhas e áreas andam da esquerda para a direita (~800 ms, `ease-out`). Réguas, medidores e barras empilhadas feitos à mão crescem com `.grow-x` / `.grow-y` (`tokens.css`). Use `chart.enter` + `useChartMotion()` do kit: anima na entrada e ao trocar o período, e fica parado para quem pede "reduzir movimento" no sistema (o `check-ui` tira os prints assim). O que **não** anima: o balão do hover (`<Tooltip isAnimationActive={false} />`), a etiqueta de valor em cima da barra (`PillMark`: aparece direto na posição final, desenhada com `<ReferenceDot shape>` e não com `LabelList`, que espera ou acompanha a animação), o hover em si e números (nada de contador rolando).
-- **Gráficos:** ocupam toda a altura e largura do cartão; eixo com respiro (o primeiro rótulo não encosta na linha); sem contorno branco ao clicar (`.recharts-wrapper *:focus { outline: none }`); legenda e tooltip com cores do tema. Tooltip sem animação (`<Tooltip isAnimationActive={false} />` no Recharts): a animação padrão faz a caixa deslizar atrás do mouse, lenta.
-- **Menu lateral (web) padronizado e compactável:** cada área com **uma palavra** ("Início", "Vendas", "Estoque"; o título comprido fica só na página), ícones da mesma família, mesmo tamanho (18 px) e mesmo peso, o ativo com fundo `bg-accent` e o ícone na cor de destaque. O botão de recolher fica **sempre embaixo**, como último item do menu (depois do tema), no mesmo lugar com o menu aberto ou recolhido; nunca no topo ao lado da marca. Recolhido, o menu mostra só os ícones (largura ~84 px, nome no `title` e no `aria-label`, tema em botão único) e a escolha fica salva. Itens com textos de tamanhos diferentes, ícones de estilos misturados ou menu que não recolhe foram apontados como amadores.
-- **Chip do filtro ligado fica à esquerda dos controles** ("Abr ×" antes das abas e do seletor), e o seletor tem largura fixa: quando o chip aparece, nada sai do lugar. À direita ele empurrava o seletor ("desloca o filtro e fica feio").
-- **Cabeçalho do celular (aprovado):** a **marca** à esquerda (logo em quadrado + nome do app) e um **botão de menu** redondo com ícone à direita. O menu abre as ferramentas secundárias (cada uma com ícone) e o tema. O título da página ("Início") fica só no web (`sr-only lg:not-sr-only`); no celular a barra inferior já diz onde a pessoa está. Nada de logo + título + subtítulo + tema espremidos numa linha (o usuário achou estranho).
-- **Barra inferior do celular:** 4 áreas, cada uma com ícone e rótulo; a ativa com o ícone dentro de uma pílula tingida (`h-7 w-12 rounded-full bg-primary/14`) e o texto na cor de destaque.
-- **Mobile:** botões principais de uma tela de detalhe fixos no rodapé; tela de detalhe mostra só o necessário; ao selecionar outra opção, rolar para o topo.
+- **Ícones obrigatórios:** favicon, `apple-icon` e `<title>` curto em todo app; ícone em todo item de menu (lateral, inferior, suspenso, abas de área); ícone de PWA quando instalável.
+- **Ícone de conteúdo dentro de um container** com fundo suave da cor (círculo ou quadrado arredondado, conforme a forma do projeto), também dentro de cartões. Exceção: chevron de linha e ícone dentro de botão ou chip que já tem fundo. Não tire ícones para ganhar espaço: encurte o texto. Uma família de ícones só.
+- **Nada de texto clicável.** Toda ação é botão (com fundo) ou a linha/cartão inteiro clicável. Inclui "Ver todas", breadcrumbs e nomes em tabelas.
+- **Botão padrão:** pílula de 40 px de altura, texto 14 px peso 600, todos os botões da tela com a mesma altura (44 px de área de toque no celular).
+- **Campo de formulário:** preenchido, sem borda, 44 px de altura; foco com anel neutro de 2 px. Nada de campo com contorno ou só com linha embaixo.
+- **Abas e filtros:** um modelo só por app (trilho segmentado, pílulas, sublinhado ou fundo suave no ativo).
+- **Linha de lista:** `[ícone] [rótulo / valor] [chip em cima, valor embaixo] [chevron]`. Chip de status no canto direito, em cima do valor; nunca grudado no título nem numa linha solta.
+- **Linha de lista não quebra título nem descrição.** Abaixo de ~460 px de largura da lista, a coluna da direita desce para uma linha embaixo do texto (`[ícone] [nome / descrição / chip + valor] [chevron]`); em tela larga, lista partida em colunas que espremem o texto ganha menos colunas. Todas as linhas com a mesma altura.
+- **Datas** em blocos (dia grande, mês pequeno), não uma string longa.
+- **Gráficos:** ocupam o cartão todo; eixo com respiro; sem contorno ao clicar; legenda e balão com cores do tema; **animação de entrada** (barras sobem, linhas andam, ~800 ms, parado com "reduzir movimento", `chart.enter` + `useChartMotion`); o balão do hover e a etiqueta de valor **não** animam; nada de número rolando.
+- **Navegação:** escolha o modelo pela quantidade de áreas (direcao-visual.md). Valendo em qualquer modelo: cada área com **uma palavra**, ícones da mesma família e tamanho, item ativo com fundo e ícone na cor de destaque. Menu lateral recolhível com o botão de recolher **embaixo**, salvo entre visitas.
+- **Celular com navegação inferior:** cabeçalho com a marca à esquerda e um botão de menu redondo à direita (ferramentas secundárias e tema); o título da página só no web. Barra inferior com 3 a 5 áreas, ícone + rótulo, a ativa com o ícone numa pílula tingida.
+- **Chip do filtro ligado à esquerda dos controles**, que têm largura fixa: quando o chip aparece, nada sai do lugar.
+- **Celular:** botões principais de uma tela de detalhe fixos no rodapé; seletores ocupam a largura toda do cartão; ao trocar de opção, rola para o topo.
 
-## 7. Interação
+## 8. Interação
 
-- **Balão do "i" sempre inteiro na tela:** abre num portal com posição fixa, preso a 8 px das bordas e virando para cima quando falta espaço embaixo (`InfoTip` em `assets/ui.tsx`). Nunca `absolute` dentro do cartão: corta em `overflow-hidden` e vaza pela borda direita ou de baixo.
-- **Sem barra de rolagem visível no celular** (abaixo de `lg`): `scrollbar-width: none` e `::-webkit-scrollbar { display: none }` (já em `assets/tokens.css`). A rolagem continua pelo dedo.
-- **Tudo que é clicável mostra a mãozinha** (`cursor: pointer`). O Tailwind v4 deixa botão com a seta padrão: a regra global está no `@layer base` de `assets/tokens.css`; o `check-ui` acusa clicável sem mãozinha.
-- **Hover só muda o fundo.** Proibido hover que sobe, cresce ou move (`translate`, `scale`, sombra que "eleva") e hover que muda ou acende borda.
-- O fundo do hover acompanha o arredondamento do item: primeiro e último item de uma lista arredondada também têm cantos arredondados no hover (`overflow-hidden` no cartão ou `first:rounded-t-* last:rounded-b-*`).
-- **Todo toque tem resposta imediata:** estado pressionado no mobile (`active:bg-*` ou leve `scale(0.98)` só ao pressionar, nunca no hover) e tela de carregando assim que a navegação começa: fundo do tema com anel girando na cor de destaque (`NavLoading`/`Spinner` em `assets/ui.tsx`). Nada de skeleton cinza que não tem a forma da tela real.
-- Selects e dropdowns com respiro entre o texto e a seta.
+- **Balão do "i" sempre inteiro na tela:** portal com posição fixa, preso a 8 px das bordas, virando para cima quando falta espaço (`InfoTip`).
+- **Sem barra de rolagem visível no celular** (já no `tokens.css`).
+- **Tudo que é clicável mostra a mãozinha** (regra global no `tokens.css`).
+- **Hover só muda o fundo.** Proibido hover que sobe, cresce, move, faz sombra "elevar" ou muda ou acende borda. O fundo do hover acompanha o arredondamento do item (primeiro e último de uma lista também).
+- **Todo toque responde na hora:** estado pressionado no celular e tela de carregando assim que a navegação começa (anel girando na cor de destaque, `NavLoading`). Nada de skeleton cinza que não tem a forma da tela.
+- Abrir uma linha, trocar de aba ou filtrar não mexe nos cartões vizinhos.
+- Selects com respiro entre o texto e a seta.
 
-## 8. Padrões de código úteis (Tailwind)
+## 9. Padrões de código úteis (Tailwind)
 
 ```tsx
-// Ícone em container
+// Ícone em container (forma e raio pela direção do projeto)
 <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary/14 text-primary [&_svg]:size-[18px]"><Wallet /></span>
 
-// Linha de lista clicável (hover só no fundo, sem mover)
-<a className="flex min-h-16 items-center gap-3 px-4 py-2.5 hover:bg-accent/40 active:bg-accent/60">...</a>
+// Linha de lista clicável (hover só no fundo)
+<a className="flex min-h-14 items-center gap-3 px-4 py-2 hover:bg-accent/40 active:bg-accent/60">...</a>
 
-// Seção: título fora do cartão
-<section><h2 className="mb-2 text-sm font-semibold">Últimos jogos</h2><div className="rounded-2xl bg-card">...</div></section>
+// Indicador com as medidas padrão (padding 16, número a 4, chip a 8)
+<section className="rounded-2xl bg-card p-4">
+  <span className="text-sm font-medium text-muted-foreground">Pedidos</span>
+  <div className="mt-1 text-4xl leading-[1.1] font-semibold tracking-tight tabular-nums">2.792</div>
+  <div className="mt-2 flex items-center gap-2">...</div>
+</section>
 
-// Dois cartões simétricos
-<div className="grid gap-3 lg:grid-cols-2 items-stretch"><Card className="h-full" /><Card className="h-full" /></div>
+// Dois blocos simétricos
+<div className="grid items-stretch gap-3 lg:grid-cols-2"><Card className="h-full" /><Card className="h-full" /></div>
 ```
 
-## 9. Dashboards (painéis de dados)
+## 10. Dashboards (painéis de dados)
 
-**Primeiro o plano de informação** (`references/informacao.md`): o que mostrar, em que ordem e onde. A beleza das referências não salva um painel com os dados errados ou nos lugares errados.
+**Primeiro o plano de informação, depois a direção visual.** A beleza não salva um painel com os dados errados ou nos lugares errados.
 
-**Copie as referências do usuário de verdade.** Antes de desenhar, abra todas as imagens de `references/exemplos-dashboards/` e leia `references/anatomia-dashboard.md` (as fotos traduzidas em medidas: espaçamento, posição de cada texto, formato dos chips). Monte com o kit `assets/dashboard.tsx`, que já segue essas medidas. O usuário aprovou este caminho ("80% bem legal"); o que falta é ficar **mais parecido** com as fotos, não mais criativo.
+**As 7 referências** (`references/exemplos-dashboards/`, medidas em `anatomia-dashboard.md`) mostram o **nível de acabamento** que o usuário gosta: calma, respiro, título de bloco discreto, chips suaves, tabela limpa, marcas finas, poucos tons. Use como régua de qualidade, **não como molde**. O painel pode ter outra superfície, outra fonte, outra composição e outra cor, desde que chegue no mesmo nível de acabamento.
 
-Reprovados (não repita):
-- Estilo "centro de operações": contorno de 8 px, CAIXA ALTA espaçada, ciano neon, mapa escuro com grade e brilho, pulsos constantes ("filme de ficção científica").
-- **Cartão de destaque preenchido de cor** ("péssima ideia"). Todos os cartões são neutros; cor só nas marcas de dado e nos chips.
-- Título de cartão com ícone em quadradinho ao lado e em negrito escuro. Nas fotos o título é cinza, peso médio, sozinho.
+Reprovados (não repita em nenhum estilo):
+- Estilo "centro de operações": contorno grosso, CAIXA ALTA espaçada, ciano neon, mapa escuro com grade e brilho, pulsos constantes ("filme de ficção científica").
+- Cartão de destaque preenchido de cor.
+- Título de bloco em negrito escuro com ícone em quadradinho ao lado.
 
-Estrutura (genérica, escolha pelo plano de informação; a posição segue a prioridade):
-- **Faixa de indicadores** (`Kpi`): 4 ou 5 iguais lado a lado. Rótulo cinza + ícone em círculo tingido à direita; número de 30 px; chip de variação + texto cinza na mesma linha.
-- **Área principal:** o gráfico ou mapa protagonista ao lado da única tabela, ou dois gráficos.
-- **Faixa de apoio:** 3 ou 4 cartões menores (partes de um todo, medidor, distribuição).
-- **Uma grade só para todas as faixas** (ex.: 12 colunas ou `repeat(5, 1fr)`), cada cartão com `col-span-*`, para as bordas ficarem alinhadas de cima a baixo. O `check-ui` acusa bordas "quase alinhadas".
+Regras (valem em qualquer composição):
+- **Cada informação aparece uma vez.** Se um bloco mostra a divisão (celular x computador), o gráfico principal não repete essa divisão. O gráfico principal compara com o período anterior (linha neutra tracejada).
+- **Bloco do tamanho do conteúdo.** Medidor, número único e legenda curta ficam em blocos estreitos; dentro do bloco, o arranjo muda pela largura **do bloco** (`@container`), não da tela.
+- **Uma grade para a tela toda**, com as bordas dos blocos alinhadas de cima a baixo (o `check-ui` acusa bordas "quase alinhadas").
+- **Linha de tabela numa linha só** no web, colunas de largura fixa: chip na coluna de chips, número na de números, chips da mesma coluna com a mesma largura. No celular, número em cima do chip.
+- **Contador de aba bate com o que dá para ver.** "Todos 60" com 5 linhas visíveis = páginas no rodapé ("1 a 5 de 60" + setas), sem rolagem interna.
+- **Lista longa (mais de ~8 linhas) mora num bloco vertical próprio**, ao lado dos gráficos, uma coluna de linhas, páginas pela altura (`ListaAlta`). Nunca um bloco largo com as linhas partidas em 2 ou 3 colunas lado a lado.
+- **Um desenho por bloco.** Dois blocos da mesma tela não usam o mesmo desenho para dados diferentes. Repertório: barras deitadas, partes de um todo (barra empilhada + legenda com %), colunas, colunas agrupadas, linha no tempo, alvo em anéis, quadro de 100, barras divergentes, pequenos múltiplos, mapa.
+- **Gráfico de bater o olho.** Se precisa raciocinar para ler, está errado. "O que somou e o que tirou" = barras que saem do meio (`Divergentes`). "Para onde vai o total" = quadro de 100 (`Quadro100`). Reprovados como difíceis: cascata, funil, barra 100% de 5 cores, barras deitadas com segmento solto.
+- **Partes de um todo da maior para a menor** e com a % de cada parte. Muitos itens pequenos viram 6 a 8 temas; o resto em "Outros".
+- **Blocos proporcionais (treemap):** no máximo 5 ou 6, todos legíveis (nome e %).
+- **Blocos de texto lado a lado que comparam as mesmas medidas viram colunas agrupadas**, não um cartão alto com vãos.
+- **O conteúdo começa na borda do bloco**, alinhado com o título; nada de bloco centralizado com recuo dentro de cartão largo.
+- **Sem sobra dentro do bloco.** Desenho pequeno no meio de bloco largo foi reprovado: o desenho toma a forma do bloco (`@container`) ou o bloco encolhe e a faixa ganha outro.
+- **Tamanho máximo dos desenhos:** medidor até ~224 px, minibarras até 64 px de altura. Em bloco grande, sobra vira outro conteúdo, o desenho não cresce.
+- **Frescor do dado** só para dado ao vivo ("Atualizado há 2 min", relativo). Dado diário ou esparso não ganha "Dados até" embaixo do título.
+- **Filtros ligados:** tocar numa barra, região ou legenda filtra a tela e mostra a pílula "Nome ×" no cabeçalho; a seleção aparece no gráfico (os outros apagados); tocar de novo desfaz.
+- **Cabeçalho:** título da página sozinho, sem subtítulo; à direita o período (se houver), o filtro ligado e o tema. No celular o título some quando a barra inferior já diz onde a pessoa está.
+- **Carregando e erro:** anel girando; erro com ícone + uma linha. Nada de cabeçalho piscando.
+- **Tela larga cabe na janela** (a partir de 1920×800, variante `fit:`): o painel inteiro na altura da janela, no máximo duas faixas de gráficos, colunas redistribuídas em vez de terceira faixa, lista paginada pela altura. No 21:9, mais colunas, nenhum bloco com mais de ~40% de vazio, nenhum gráfico mais largo que ~4:1. Abaixo disso a tela rola, com a primeira tela cabendo inteira.
+- **Mapa:** terra neutra, mar da cor do cartão, sem grade; fracos em neutro, fortes na cor; rótulo nos principais; pulso só no que acabou de chegar (`FillMap`, `useMapColumns`).
+- Marque a raiz com `data-ui="painel"`.
 
-Regras do padrão:
-- **Cada informação aparece uma vez.** Se um cartão mostra a divisão (ex.: celular x computador), o gráfico principal não repete essa divisão nos números do topo nem nas linhas. O gráfico principal compara o período atual com o anterior (linha cinza tracejada).
-- **Cartão do tamanho do conteúdo.** Medidor, número único e legenda curta ficam em cartões estreitos (3 de 12 colunas). Dentro do cartão, troque o arranjo pela largura **do cartão**, não da tela (`@container` + `@sm:flex-row`): lado a lado quando cabe, empilhado quando estreito. Nunca um medidor pequeno no meio de um cartão de meia tela.
-- **Linha de tabela numa linha só** no web: posição, nome, coluna de números e coluna de chips (variação "Vs véspera" ou "Novo"), com larguras fixas para alinhar entre as linhas. Nunca chip grudado depois do número: chip fica na coluna de chips, número na coluna de números. Chips de uma mesma coluna têm **a mesma largura** (largura fixa com conteúdo centrado, ex.: `w-[4.75rem] justify-center`), nunca do tamanho do texto. No celular, número em cima do chip na coluna da direita.
-- **Contador de aba bate com o que dá para ver.** Se a aba diz "Todos 60" e só cabem 5 linhas, a lista tem páginas: rodapé baixo com "1 a 5 de 60" e dois botões redondos de seta (sem rolagem interna). Ao trocar de aba, volta para a primeira página.
-- **Partes de um todo mostram a porcentagem de cada parte** (Como leem: site no celular, computador, aplicativo), não só um medidor de uma parte só.
-- **Variação:** compare com o período anterior de mesmo tamanho. Chip de canto pequeno (6 px) com seta: verde suave quando melhorou, vermelho suave quando piorou, cinza quando igual (`DeltaChip`, com `invert` quando subir é ruim).
-- **Neutro primeiro:** 80 a 90% da tela em cinza. Barras em pílula finas cinza com **uma** destacada na cor e etiqueta escura em pílula (`PillMark`). Grade tracejada, linha de média pontilhada.
-- **Separadores tracejados** dentro do cartão (`Dashed`), entre linhas de tabela e antes de rodapés `KeyValue`.
-- **Uma lista por tela.** Conta como lista: linhas com nome + vários valores (tabela, feed, ranking com colunas). Não conta: até 8 barras com nome e valor (é um gráfico) e legenda, **desde que o desenho não se repita em outro cartão da tela**. A lista tem abas com contagem (`Tabs`).
-- **Lista longa (mais de ~8 linhas) mora num cartão vertical próprio**: uma coluna da grade (3 ou 4 de 12), ao lado dos gráficos, de cima a baixo (`row-span`), com uma coluna de linhas só e páginas pela altura (`ListaAlta` do kit: "1 a 11 de 23"). Alternativa quando os grupos têm sentido (por porte, por status): 3 cartões separados lado a lado, cada um com título. **Nunca** um cartão largo no fim da tela com as linhas partidas em 2 ou 3 blocos lado a lado: as linhas parecem se juntar na horizontal e a tela fica bagunçada (reprovado num painel industrial). No celular a lista vai para o fim. No cartão estreito ficam 2 ou 3 colunas de dado; as outras aparecem pela largura do cartão (`@container`).
-- **Um desenho por bloco.** Na mesma tela, dois cartões não usam o mesmo desenho para dados diferentes. Repertório para variar: barras deitadas (ranking de motivos), partes de um todo (barra empilhada + legenda com %), colunas (distribuição), colunas agrupadas (comparar 2 ou 3 medidas entre categorias), alvo em anéis (distância de um ponto), cascata, funil, linha no tempo.
-- **Blocos de texto lado a lado não viram cartão alto.** Três blocos "nome + número + linhas" em colunas dentro de um cartão alto deixam vão em cima e embaixo (reprovado em "Por tipo de item"). Se os blocos comparam as mesmas medidas entre categorias, vire um gráfico de colunas agrupadas (uma cor por medida, legenda curta no cabeçalho, medidas no mesmo sentido: todas "quanto menor, melhor"), que ocupa a altura do cartão.
-- **Gráfico de bater o olho.** Se a pessoa precisa raciocinar para ler, o gráfico está errado. "O que somou e o que tirou" (meta ao realizado) são **barras que saem do meio**: para a esquerda o que tirou, para a direita o que somou, uma linha por fator, valor com sinal ao lado, o resultado em número no canto do cartão e o "feito de planejado" embaixo de cada nome (`Divergentes`). "Para onde vai o total" é um **quadro de 100 quadradinhos** ("De cada 100 horas, 40 produzindo"), com a legenda e a % ao lado (`Quadro100`). Reprovados num painel industrial, nesta ordem: barras deitadas com segmento solto, barra 100% de 5 cores, **cascata** e **funil** ("ainda são gráficos complexos de entender").
-- **Partes de um todo sempre da maior para a menor**, no desenho e na legenda (40%, 25%, 15%, 12%, 8%). Nunca na ordem do cadastro.
-- **Muitos itens pequenos e parecidos viram poucos temas.** Dezenas de motivos com poucos % cada, em barras, não dizem nada ("gráfico bem normal e ruim"). Agrupe em 6 a 8 temas com nome de uma palavra (Espera, Pessoas, Transporte) e mostre em colunas com a % em cima de cada uma; o detalhe de cada tema vai no "i".
-- **Blocos proporcionais (treemap): todo bloco precisa dar para ler.** No máximo 5 ou 6 blocos; os pequenos entram em "Outros". Cada bloco mostra nome e %, sem texto cortado e sem quadradinho mudo. O maior na cor de destaque, os outros neutros. O desenho ocupa o corpo todo do cartão.
-- **O conteúdo do cartão começa na borda do cartão.** Rótulos e barras alinham à esquerda com o título, sem recuo. Bloco centralizado com `mx-auto` + `max-w-*` dentro de um cartão largo cria um recuo à esquerda que parece erro ("muito padding no texto do gráfico, padding start"). Para limitar a largura de uma linha, use só `max-w-*`, sem centralizar.
-- **Sem sobra dentro do cartão.** Desenho pequeno no meio de um cartão largo foi reprovado ("muito espaço vago", "muito espaço no gráfico de posição"). Duas saídas: o desenho toma a forma do cartão pela largura dele (`@container`: quadro 10 x 10 com legenda ao lado no estreito, 20 x 5 de ponta a ponta com legenda embaixo no largo; alvo com a altura do cartão), ou o cartão encolhe e a faixa ganha outro cartão pequeno com outra informação.
-- **Tamanho máximo dos desenhos:** medidor até 224 px de largura e número de 28 px; minibarras até 64 px de altura; número de indicador até 30 px. Em cartão grande, sobra espaço em volta (ou o cartão ganha outro conteúdo), o desenho não cresce.
-- **Frescor do dado:** só para dado ao vivo, que muda várias vezes por hora: chip "Atualizado há 2 min" (relativo, anda sozinho) perto do dado. Dado de sorteio, de fechamento diário ou de publicação esparsa **não ganha subtítulo de frescor**: "Dados até 8 nov" embaixo do título foi reprovado ("bem ruim"). A data já aparece no próprio dado (o último sorteio na lista, a data do próximo no cartão). Nunca "Atualizado agora".
-- **Filtros ligados:** tocar numa barra, região ou linha de legenda filtra a tela e mostra uma pílula "Nome ×" no cabeçalho para limpar. O gráfico mostra a seleção: a etiqueta de valor vai para a barra escolhida (nunca fica no item atual), as outras ficam apagadas, e tocar de novo desfaz.
-- **Cabeçalho da página:** web: título de 28 px semibold sozinho (como "General metrics" do Skymetrics), sem subtítulo; à direita o período em pílulas (se houver), a pílula do filtro ligado ("Concurso 3080 ×") e o tema. Celular: o cabeçalho é o do app (marca + menu, seção 6); o título da página some (`sr-only`), o tema vai para o menu e o período, se houver, fica numa linha sozinho na largura toda.
-- **Carregando e erro:** só o anel girando enquanto carrega; erro com `FillEmpty` (ícone + uma linha). Nunca outro cabeçalho piscando.
-- **21:9 (4xl) sem cartão vazio:** use uma grade de 12 colunas. Linha principal: gráfico protagonista 5, segundo gráfico 3 ou 4, lista 3 ou 4 no cartão vertical dela (uma coluna de linhas; nunca partida em blocos lado a lado). Faixa de apoio: nenhum cartão com mais de ~40% de área vazia: ponha medidor e valores lado a lado, dê 3 ou 4 colunas à legenda, ou acrescente mais um cartão pequeno. Gráfico nunca mais largo que ~4:1.
-- **Tela larga cabe na janela, sem rolagem** (o usuário usa widescreen e cobrou: "a skill pede para o dash tentar ao máximo ficar na altura"). A partir de 1920 x 800 (variante `fit:` do `tokens.css`) o dashboard inteiro fica na altura da janela: moldura `fit:h-dvh fit:overflow-hidden`, grade `fit:h-full fit:grid-rows-[auto_minmax(0,1fr)_minmax(0,1fr)]` (indicadores + duas faixas iguais), cartões `fit:h-auto!` e gráficos ocupando o corpo. São no máximo duas faixas de gráficos: redistribua as colunas (`fit:col-span-*`, `fit:order-*`) em vez de criar uma terceira faixa. A lista fica no cartão vertical dela, pelas duas faixas, paginada pela altura. Nem estica (cartões de 800 px) nem passa da borda. Abaixo disso (notebook) a tela rola, com a primeira tela cabendo inteira.
-- **Altura:** em tela alta (≥ 800 px, variante `tall` do `tokens.css`) tudo cabe sem rolagem (`lg:tall:h-dvh`). Em notebook baixo, a área principal ocupa o resto da primeira tela e a faixa de apoio fica logo abaixo. No 21:9 a grade ganha colunas (mais um gráfico ou a tabela em duas colunas), nunca um cartão vazio nem um desenho gigante.
-- **Mapa** (quando houver): terra cinza, mar da cor do cartão, sem grade; fracos em cinza, fortes na cor, rótulo nos 3 principais; pulso só no que acabou de chegar. Mapa-múndi em `FillMap`; coluna com a largura da proporção em `useMapColumns` (`assets/painel.tsx`).
-- Continuam valendo: dois temas, paleta validada inteira (bloco completo em `paletas.md`), sem "—", " · " ou "…", hover só no fundo, mãozinha, check e prints. Marque a raiz com `data-ui="painel"`.
+## 11. Checklist antes de mostrar (rode e olhe os prints)
 
-## 10. Checklist antes de mostrar (rode e olhe os prints)
+**Direção**
+- [ ] Plano de informação feito? A decisão mais urgente está em cima à esquerda, com motivo e prazo? Nada da tela antiga sumiu sem destino?
+- [ ] Direção visual escrita (personalidade, cor, tipo, forma, assinatura) e aplicada? Passou no teste da mesmice (`direcao-visual.md` seção 6)?
+- [ ] A composição saiu da pergunta da tela? Se tem faixa de indicadores no alto, ela se justifica?
+- [ ] Um ponto focal claro (teste de apertar os olhos)? Blocos de tamanhos diferentes pela importância?
 
-- No celular, seletores (concurso, método, período) ocupam a largura toda do cartão, e o estado vazio vai até a barra inferior.
-- Em nenhuma largura (celular, notebook, ultrawide) uma linha de lista tem título ou descrição quebrando por causa de uma coluna à direita; todas as linhas da lista têm a mesma altura.
-- [ ] Ícone da aba (favicon, apple-icon, título) e ícone em todo item de menu? Celular com marca à esquerda e menu à direita, sem subtítulo de frescor embaixo do título?
-- [ ] Gráficos com animação de entrada (barras sobem, linhas andam), balão do hover sem animação, e parados com "reduzir movimento"?
-- [ ] Mãozinha em tudo que é clicável? Balões do "i" e caixas de hover dentro da tela e sem animação atrasada? Sem barra de rolagem no celular?
-- [ ] Cartões de faixas diferentes com as bordas alinhadas (mesma grade)? Nenhum cartão preenchido de cor? Chips de variação verde/vermelho suaves com seta?
+**Proibições**
+- [ ] Fonte fora da lista proibida, números tabulares, todo texto começando com maiúscula, nada em CAIXA ALTA?
+- [ ] Sem "—", " · ", "…", "Rótulo: valor", frases explicativas fixas?
+- [ ] Sem bordas coloridas, cartão preenchido de cor, hover que move ou muda borda? Hover com cantos certos?
+- [ ] Todo ícone em container? Nenhum texto clicável? Ícone na aba e em todo item de menu?
+- [ ] Uma lista só na tela? Nenhum desenho repetido em dois blocos? Lista longa num bloco vertical próprio?
 - [ ] Mexi só no que foi pedido e só no breakpoint pedido? Nada existente sumiu?
-- [ ] Prints em 390 px, 1366×650, 1536×730 e 1920×950 conferidos um a um, nos temas claro **e** escuro (e 320 px sem estouro horizontal)?
-- [ ] Nada passa da borda de baixo da primeira tela? Mapas e gráficos limitados pela altura da janela?
-- [ ] Tema segue o sistema, tem botão de troca e nenhuma cor fixa (`#000`, `#fff`, hex solto) quebra o outro tema? Cor de destaque escolhida para este projeto, não laranja por padrão?
-- [ ] Tela larga (1920 x 950, 2560 x 960, 2752 x 1100, 3440 x 1300): o dashboard cabe na janela sem rolagem, sem cartão esticado e sem sobra dentro de cartão? Cada gráfico se entende de bater o olho? Partes de um todo da maior para a menor?
-- [ ] Menu lateral com uma palavra por área, ícones iguais e botão de recolher? Chip do filtro à esquerda, sem deslocar os controles?
-- [ ] Só uma lista na tela? Outros recortes viraram filtro, ordenação ou gráfico? Lista longa num cartão vertical próprio (ou em cartões separados), nunca em blocos de linhas lado a lado no mesmo cartão? Nenhum desenho repetido em dois cartões (duas barras deitadas iguais)?
-- [ ] Paleta inteira de `paletas.md` (sem cores avulsas)? Dado ordenado numa cor só? Nenhum número pintado com cor de série? Vermelho/amarelo só para status?
-- [ ] Plano de informação feito (`informacao.md`)? A decisão ou ação mais urgente está em cima à esquerda, junto com o motivo e o prazo? Nada importante faltando, nada da tela antiga sumido sem destino, nenhum indicador de curiosidade ou quase sempre zero?
-- [ ] Uma versão só da tela (sem `?visao=`, sem seletor de versões)? Hierarquia clara: um bloco principal, poucos números de destaque, e só os que mudam uma decisão?
-- [ ] Em 2560×960 e 3440×1300 a tela ganha colunas, sem gráfico achatado nem linha de lista gigante?
-- [ ] Fonte fora da lista proibida, números tabulares, todo texto começando com maiúscula?
-- [ ] Simetria: cartões vizinhos com a mesma altura, conteúdo preenchendo, colunas alinhadas, grid sem sobra, mesmo número de linhas dos dois lados?
-- [ ] Abrir uma linha da lista (acordeão), trocar de aba ou filtrar não mexe nos cartões vizinhos (nada desce, cresce ou muda de tamanho)?
-- [ ] Nenhum cartão com vão por dentro (linhas espalhadas, título preso em cima e conteúdo no meio, gráfico com teto ao lado de vizinho esticado)? No ultrawide, texto curto não divide a faixa com gráficos altos?
-- [ ] Títulos de seção fora dos cartões (no dashboard: título cinza dentro, em cima à esquerda) e alinhados? Nenhum cartão dentro de cartão?
-- [ ] Dashboard: abri as fotos de referência e comparei lado a lado (título, indicador, chips, tabela, legenda, medidor)? Nenhum medidor ou minibarra gigante no 21:9?
-- [ ] Todo ícone em container? Nenhum texto clicável? Chips no canto direito em cima do valor?
-- [ ] Sem bordas coloridas, sem hover que move ou muda borda, hover com cantos certos?
-- [ ] Sem frases explicativas fixas, sem "Rótulo: valor", sem " · ", sem "—", sem "…"?
-- [ ] Tela preenchida até o fim, sem metade vazia e sem seções vazias?
-- [ ] Largura total no web, sem `max-w` centralizado?
+
+**Acabamento**
+- [ ] `paleta.mjs check` sem falha? Cores só por token? Dado ordenado numa cor só, número nunca pintado, vermelho e amarelo só para status, variação com seta?
+- [ ] Prints em 320, 390, 1366×650, 1536×730, 1920×950 e ultrawide conferidos um a um, nos temas claro **e** escuro?
+- [ ] Nada passa da borda de baixo da primeira tela? Tela larga ganha colunas e cabe na janela, sem gráfico achatado nem linha gigante?
+- [ ] Simetria: mesma altura lado a lado, nenhum vão dentro de bloco, colunas alinhadas, grid sem sobra, bordas alinhadas entre faixas?
+- [ ] Nenhuma linha de lista com título ou descrição quebrando; seletores na largura toda no celular; estado vazio ocupando o espaço?
+- [ ] Espaçamento por papel (`medidas.md`): mesmo padding em todos os cartões, um `gap` só entre eles, rótulo a 4 e chip a 8 do número em todo lugar, nada fora da escala?
+- [ ] Alinhamento: em cada cartão, tudo começa no mesmo x à esquerda e termina no mesmo x à direita? Nenhuma diferença de 1 a 6 px?
+- [ ] Tamanho por papel: botões com a mesma altura, chips de 24, containers de ícone iguais, linhas da lista com a mesma altura?
+- [ ] Cartão sem borda, raio de 16 a 24, lista com divisória (sem zebra, sem blocos), campo preenchido sem contorno, um modelo só de abas?
+- [ ] Proximidade agrupando, um raio só, ícones de uma família?
+- [ ] Estados desenhados: vazio, carregando, erro, texto longo, número grande?
+- [ ] Gráficos com entrada animada, balão sem animação, parados com "reduzir movimento"? Mãozinha em tudo clicável? Balão do "i" dentro da tela?
+- [ ] Largura total no web, tela preenchida até o fim, sem seções vazias?
 
 Rode antes de mostrar:
 
 ```sh
+node <pasta-da-skill>/scripts/paleta.mjs check src/app/globals.css
 node <pasta-da-skill>/scripts/lint-ui.mjs src
 node <pasta-da-skill>/scripts/check-ui.mjs http://localhost:3000/<rota-alterada> --out=.ui-check
 ```
